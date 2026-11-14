@@ -1,37 +1,41 @@
 # Progress
 
-Last updated: 14 Nov 2026, 14:30 SGT
+Last updated: 14 Nov 2026, 15:00 SGT
 
 ## Current state
 
-The first vertical slice works locally: a lunar site and date range go to NASA/JPL Horizons
-through a server route, the response is parsed and checked, and Sun elevation is charted with
-provenance. Not yet deployed. No south-pole sites yet — waiting on cited coordinates.
+The app compares two lunar sites over the same date range: Sun and Earth elevation charts per
+site, a table of geometric visibility metrics, and provenance for every request. It runs locally
+from a production build against live NASA/JPL Horizons data. Not yet deployed. No south-pole
+sites yet — waiting on cited coordinates.
 
 ## Implemented and verified
 
 | Feature | How it was verified |
 |---|---|
-| Live Sun elevation query for a Moon-surface site | Local production build; chart of 721 real hourly values; values equal to a direct Horizons request |
-| Server route `/api/ephemeris` (Sun and Earth) | Called locally for both bodies; correct rows returned |
-| Input validation and readable errors | Unit tests; bad longitude and oversize range return HTTP 400 with a message |
+| Two-site comparison, Sun and Earth, live data | Local production build; Apollo 11 vs Apollo 17, 30 days hourly; four live queries; no console errors |
+| Site presets with cited coordinates (six Apollo sites, NSSDCA) | Coordinates copied from the NASA page read on 14 Nov; each preset links its source |
+| Custom coordinates, labelled as unverified | Seen in the local app |
+| Geometric windows: time above 0°, longest window, next rise/set, Sun-and-Earth overlap | 14 unit tests, including checks on real Horizons data |
+| Server route `/api/ephemeris` (Sun and Earth) | Values equal to direct Horizons requests |
+| Near-pole queries (latitude −89.5° and −90°) | Direct and through the app; tables returned |
+| Response caching (in-memory, plus CDN header) | Repeat query returned in 5 ms with the original retrieval time |
+| Input validation and readable errors | Unit tests; HTTP 400 with a message |
 | Horizons "HTTP 200 but no data" detected as an error | Unit test on a real failed response |
-| Response checked against the requested body, site, and frame | Unit tests |
-| Provenance panel (source, API version, ephemeris, frame, exact request URL) | Seen in the local app |
-| Archived real sample, clearly labelled | `/api/sample` returns `source: "archive"` with retrieval time |
-| Tests, lint, typecheck, production build | 32 tests pass; ESLint clean; `tsc` clean; `next build` succeeds |
+| Response checked against requested body, site, and frame | Unit tests |
+| Archived real samples, clearly labelled | Five sample ids return `source: "archive"` with retrieval time |
+| Tests, lint, typecheck, production build | 46 tests pass; ESLint clean; `tsc` clean; `next build` succeeds |
 
 ## In progress
 
-- Deployment to Vercel (T-04).
+- Deployment to Vercel (T-04) — needs Asher to sign in and import the repository.
 
 ## Not implemented
 
-- Earth elevation in the interface (the server route already supports it).
-- Second site and comparison view.
-- Visibility windows and summaries.
-- South-pole site presets.
-- Response caching.
+- South-pole candidate presets (waiting on T-05).
+- Science-approved visibility thresholds; the current "centre above 0°" rule is provisional (T-06).
+- Shaded windows on the charts, sky-position view, animation.
+- Tan's UI specification.
 - Terrain-aware visibility — out of scope for the MVP.
 
 ## Material available for the demo video
@@ -40,17 +44,27 @@ provenance. Not yet deployed. No south-pole sites yet — waiting on cited coord
 |---|---|
 | Public app URL | Not yet available |
 | Repository | <https://github.com/Zdcgaryland69/OrbitXI-Lunar-Landing-Site-Navigator> |
-| Screenshots | None saved yet |
-| Approved wording | "Geometric Sun elevation from NASA/JPL Horizons; terrain not included." |
+| Screenshots | None saved to the repository yet |
+| Approved wording | "Geometric Sun and Earth elevation from NASA/JPL Horizons; terrain not included." |
 
-Not ready to record: the app does not yet show south-pole sites, Earth, or comparison.
+Not ready to record: there is no public URL and no south-pole site yet.
 
 ## Blockers
 
+- Vercel sign-in and import (Asher, T-04).
 - Two south-pole sites with cited coordinates (Baoyi, T-05).
-- Sunlit and Earth-visible threshold definitions (Yi, T-06).
+- Sunlit and Earth-visible threshold definitions and frame confirmation (Yi, T-06).
 
 ## Log
+
+### 14 Nov, 14:35–15:00 SGT — Asher with Claude
+
+- Added Earth series, second site, comparison table, and geometric window calculations.
+- Added six Apollo landing sites as presets, coordinates from the NASA NSSDCA page.
+- Tested Horizons at latitude −89.5° and −90° (generic coordinates, not candidate sites): works.
+- Added response caching. Saved real samples for Apollo 11 and Apollo 17.
+- Plausibility check: Apollo 17 lies about 7.3° east of Apollo 11, so sunrise should come roughly
+  14 hours earlier; the app shows 13.3 hours. Not a scientific validation.
 
 ### 14 Nov, 14:09–14:30 SGT — Asher with Claude
 

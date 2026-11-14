@@ -39,11 +39,12 @@ error messages, and provenance.
 src/app/page.tsx                  Page shell
 src/app/api/ephemeris/route.ts    Live Horizons proxy
 src/app/api/sample/route.ts       Archived real response, labelled as archive
-src/components/                   Form, chart, provenance and limitations panels
+src/components/                   Site pickers, charts, comparison table, provenance, limitations
 src/lib/horizons/request.ts       Input validation, limits, Horizons parameter builder
 src/lib/horizons/parse.ts         Observer-table parser and header metadata
 src/lib/horizons/client.ts        Fetch, timeout, error mapping, response-vs-request checks
 src/lib/sites.ts                  Site presets, each with a cited coordinate source
+src/lib/windows.ts                Geometric above-threshold intervals and summaries
 src/lib/samples.ts                Loader for archived responses
 src/data/samples/                 Unmodified Horizons responses with retrieval metadata
 scripts/fetch-sample.mjs          Reproducible capture of a real response
@@ -70,4 +71,6 @@ most 2000 rows, dates 1950–2100, height −10 to 20 km. These are app choices,
 | Horizons as the only MVP data source | Named in the challenge Resources; gives Sun and Earth angles for a Moon-surface site directly |
 | Server-side proxy instead of browser calls | No CORS header observed |
 | No terrain model in MVP | Out of reach in two days for one developer; stated clearly in the UI |
-| No caching yet | Not needed for the first slice; planned before heavier comparison queries |
+| In-memory cache (6 h) plus `s-maxage=3600` | A comparison makes four Horizons queries; repeats should not hit JPL again. Cached entries keep their original retrieval time |
+| Client sends the four queries one at a time | Horizons rate limits are undocumented; stay polite |
+| Windows computed in the browser from the returned series | Keeps the server a thin, verifiable proxy |

@@ -11,13 +11,13 @@ Status: todo / doing / blocked / done. Times are SGT.
 | T-04 | Deploy to Vercel and confirm public URL | Asher | P0 | T-01 | 14 Nov 17:00 | todo |
 | T-05 | Supply two south-pole sites with cited coordinates | Baoyi | P0 | — | 14 Nov 18:00 | todo |
 | T-06 | Define sunlit and Earth-visible thresholds; confirm frame | Yi | P0 | — | 14 Nov 18:00 | todo |
-| T-07 | Add Earth elevation to the chart | Asher | P0 | T-03 | 14 Nov 18:00 | todo |
-| T-08 | Second site and side-by-side comparison | Asher | P0 | T-07 | 14 Nov 21:00 | todo |
-| T-09 | Geometric visibility windows and summary | Asher | P0 | T-06, T-07 | 14 Nov 22:00 | blocked (T-06) |
+| T-07 | Add Earth elevation to the chart | Asher | P0 | T-03 | 14 Nov 18:00 | done |
+| T-08 | Second site and side-by-side comparison | Asher | P0 | T-07 | 14 Nov 21:00 | done |
+| T-09 | Geometric visibility windows and summary | Asher | P0 | T-06, T-07 | 14 Nov 22:00 | doing — built with a provisional 0° rule; final thresholds need T-06 |
 | T-10 | Add the cited south-pole sites as presets | Asher | P0 | T-05 | 15 Nov 10:00 | blocked (T-05) |
 | T-11 | UI and visualization specification | Tan | P1 | — | 15 Nov 09:00 | todo |
 | T-12 | Apply UI specification | Asher | P1 | T-11, T-08 | 15 Nov 13:00 | todo |
-| T-13 | Server-side caching of Horizons responses | Asher | P1 | T-08 | 15 Nov 11:00 | todo |
+| T-13 | Server-side caching of Horizons responses | Asher | P1 | T-08 | 15 Nov 11:00 | done |
 | T-14 | Science spot check against Horizons web interface | Yi | P0 | T-10 | 15 Nov 15:00 | todo |
 | T-15 | QA pass on the deployed app; submission checklist | Sean | P0 | T-10 | 15 Nov 16:00 | todo |
 | T-16 | Feature freeze | Asher | P0 | T-12 | 15 Nov 13:00 | todo |

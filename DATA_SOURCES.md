@@ -42,7 +42,6 @@ All tests used the Horizons manual's own example site (Tycho crater, `348.8, -43
 | Invalid target | HTTP 200 with "No matches found" and no table — must be treated as an error |
 | Sun, 30 days hourly | 721 rows, ordered, hourly; elevation −45.27° to 48.21° |
 | Earth, 30 days hourly | 721 rows, ordered, hourly; elevation 37.88° to 52.50° |
-
 Facts read from the response headers:
 
 - API signature: `NASA/JPL Horizons API`, version 1.2.
@@ -60,16 +59,19 @@ Facts read from the response headers:
 Plausibility check: at latitude −43.3° the Sun can rise to about 90° − 43.3° ± 1.5° ≈ 48°, which
 matches the 48.21° maximum. This is a sanity check, not a scientific validation.
 
+| Sun and Earth at latitude −89.5°, and Sun at −90° (generic coordinates) | Tables returned; values vary smoothly |
+| Sun and Earth, Apollo 11 and Apollo 17 sites, 30 days hourly | 721 rows each |
+
 ### Archived samples
 
-`src/data/samples/` holds two unmodified responses (Sun and Earth, Tycho example, 30 days hourly,
-retrieved 2026-11-14 06:14 UTC) with the exact request and retrieval time. Recreate with
+`src/data/samples/` holds six unmodified responses (Sun and Earth for the Tycho example, Apollo 11,
+and Apollo 17 sites; 30 days hourly; retrieved 2026-11-14 between 06:14 and 06:52 UTC) with the exact request and retrieval time. Recreate with
 `scripts/fetch-sample.mjs`. Values may differ very slightly on later retrieval if JPL updates
 Earth-orientation predictions.
 
 ### RESEARCHED BUT UNTESTED
 
-- Sites at or very near the south pole (latitude close to −90°).
+- Whole-month ranges at polar latitudes (only 6-hour polar tests so far).
 - Ranges longer than 30 days and steps shorter than 30 minutes.
 - Behaviour under many requests in quick succession.
 
@@ -77,6 +79,23 @@ Earth-orientation predictions.
 
 - Horizons rate and concurrency limits (not stated in the API documentation we read).
 - Whether judges require data from the listed Resources only.
+
+## Site coordinates
+
+| Sites | Source | Notes |
+|---|---|---|
+| Apollo 11, 12, 14, 15, 16, 17 Lunar Modules | NASA NSSDCA, [Apollo Landing Site Coordinates](https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html), read 2026-11-14 | Page states: planetocentric Mean Earth/Polar Axis system, DE421, from LRO images (Wagner et al., Icarus 283, 2017). No heights given; the app uses 0 km. Historical sites, not south-pole candidates. |
+| Tycho crater example | JPL Horizons manual surface-site example | Pipeline verification only. |
+| South-pole candidates | **None yet** | Waiting on Baoyi. |
+
+The NSSDCA coordinates are in a DE421-based mean-Earth frame; Horizons reports  with
+DE441. Whether the difference matters at our precision is a question for Yi.
+
+## Visibility windows (provisional)
+
+The app reports a body as "above 0°" when the elevation of its disc centre is greater than 0°.
+Rise and set times are linear interpolations between adjacent samples, so they are accurate to
+within one sampling step at best. This rule is a placeholder until Yi defines thresholds.
 
 ## What the elevation value means
 

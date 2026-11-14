@@ -9,9 +9,9 @@ Earth sit relative to the local horizon, using ephemeris data from the
 
 ## Current status
 
-See [PROGRESS.md](PROGRESS.md) for the verified feature list. In short: Sun elevation for one
-site, charted from live Horizons data, is working. Earth visibility and two-site comparison are
-not yet in the interface.
+See [PROGRESS.md](PROGRESS.md) for the verified feature list. In short: two sites can be compared
+over the same dates, with Sun and Earth elevation charts and geometric visibility metrics from live
+Horizons data. Lunar south-pole candidate sites have not been added yet.
 
 ## What the numbers mean
 

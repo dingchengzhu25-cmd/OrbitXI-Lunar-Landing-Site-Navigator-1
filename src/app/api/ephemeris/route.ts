@@ -26,7 +26,9 @@ export async function GET(request: NextRequest) {
   if (!check.ok) return fail(400, "INVALID_REQUEST", check.message);
 
   try {
-    return Response.json(await fetchHorizonsEphemeris(check.value));
+    const data = await fetchHorizonsEphemeris(check.value);
+    // Let the CDN reuse identical queries for an hour; the body carries its own retrieval time.
+    return Response.json(data, { headers: { "Cache-Control": "public, s-maxage=3600" } });
   } catch (err) {
     if (err instanceof HorizonsError) return fail(STATUS[err.code], err.code, err.message);
     console.error("Unexpected /api/ephemeris failure", err);

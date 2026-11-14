@@ -5,6 +5,33 @@ import { HorizonsError, type EphemerisResponse, type HorizonsRequest, type Parse
 const TIMEOUT_MS = 20_000;
 
 /**
+ * Small in-memory cache of successful responses, keyed by the exact Horizons URL.
+ * It spares Horizons repeat queries while a server instance stays warm. Entries keep
+ * their original retrieval time, so provenance shown to the user stays truthful.
+ */
+const CACHE_TTL_MS = 6 * 3_600_000;
+const CACHE_MAX_ENTRIES = 200;
+const cache = new Map<string, { storedAtMs: number; value: EphemerisResponse }>();
+
+function cacheGet(url: string, nowMs: number): EphemerisResponse | null {
+  const hit = cache.get(url);
+  if (!hit) return null;
+  if (nowMs - hit.storedAtMs > CACHE_TTL_MS) {
+    cache.delete(url);
+    return null;
+  }
+  return hit.value;
+}
+
+function cacheSet(url: string, value: EphemerisResponse, nowMs: number): void {
+  if (cache.size >= CACHE_MAX_ENTRIES) {
+    const oldest = cache.keys().next().value;
+    if (oldest !== undefined) cache.delete(oldest);
+  }
+  cache.set(url, { storedAtMs: nowMs, value });
+}
+
+/**
  * Confirms that the table Horizons produced is for the body and site we asked for.
  * Guards against silently charting a different target or location.
  */
@@ -33,6 +60,8 @@ export function assertMatchesRequest(parsed: ParsedEphemeris, req: HorizonsReque
 /** Fetches and validates a live observer table from NASA/JPL Horizons. Server-side only. */
 export async function fetchHorizonsEphemeris(req: HorizonsRequest): Promise<EphemerisResponse> {
   const horizonsUrl = buildHorizonsUrl(req);
+  const cached = cacheGet(horizonsUrl, Date.now());
+  if (cached) return cached;
 
   let res: Response;
   try {
@@ -71,11 +100,14 @@ export async function fetchHorizonsEphemeris(req: HorizonsRequest): Promise<Ephe
   const parsed = parseHorizonsObserverJson(body);
   assertMatchesRequest(parsed, req);
 
-  return {
+  const now = new Date();
+  const value: EphemerisResponse = {
     source: "live",
-    retrievedAtUtc: new Date().toISOString(),
+    retrievedAtUtc: now.toISOString(),
     request: req,
     horizonsUrl,
     ...parsed,
   };
+  cacheSet(horizonsUrl, value, now.getTime());
+  return value;
 }
