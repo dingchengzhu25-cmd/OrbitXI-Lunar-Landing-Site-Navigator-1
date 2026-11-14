@@ -1,6 +1,6 @@
 # Progress
 
-Last updated: 15 Nov 2026, 04:45 SGT
+Last updated: 15 Nov 2026, 05:00 SGT
 
 ## Current state
 
@@ -98,7 +98,7 @@ open point is closed on the science side.
 
 QA findings to fix:
 
-- **QA20:** failed on build `86e8f04` (README credits incomplete). Fixed in `b81bca8`; re-run passed at 04:41. The AI-use paragraph is to be confirmed by Asher.
+- **QA20:** failed on build `86e8f04` (README credits incomplete). README now has NASA data attribution (integrated vs researched-only), third-party software and licences, external media, and AI assistance disclosure; every link in it was opened. Status **PARTIAL**, not PASS: the demo video's credits, the submission form's links and AI field, and Asher's confirmation of the AI paragraph are outstanding (T-30).
 - Changing the form after results are shown gives no "settings changed" notice; results stay
   correctly labelled (T-31).
 - Coordinate errors are shown after Compare, not beside the field (T-31).
@@ -138,6 +138,7 @@ Not ready to record: no south-pole point is on production yet (T-27, T-10).
 
 - Review of the two reference points before they can go to production (Yi, T-27).
 - Final video (Zhang, T-17) and review of the official form (T-18).
+- Video credits, submission-form disclosure and confirmation of the AI paragraph (T-30).
 - Decisions for the video: demo sites and dates, recording plan, voice, editor (T-23).
 
 ## Dependency audit (14 Nov)
@@ -148,6 +149,19 @@ ESLint tooling (`typescript-eslint` packages). `npm audit --omit=dev` reports 0.
 deployed app is affected, so no update was made.
 
 ## Log
+
+### 15 Nov, 04:48–05:00 SGT
+
+- Compliance audit for QA20. Read licences from the installed packages' own licence files;
+  95 production entries in the lock file: MIT, ISC, BSD-3-Clause, 0BSD, Apache-2.0, plus
+  CC-BY-4.0 (caniuse-lite) and LGPL-3.0-or-later components of the optional image library that
+  Next.js installs. Geist typeface: SIL Open Font License 1.1 (read on the Google Fonts licence page).
+  Repository assets: one template favicon and three own screenshots; no imagery, video or audio.
+- README restructured into four compliance sections. An earlier README revision (`b81bca8`) had
+  been recorded as "QA20 PASS"; on the stricter reading that every applicable requirement must be
+  verified, it is corrected to PARTIAL.
+- The two QuickMap addresses noted on 14 Nov are the same site: `quickmap.lroc.asu.edu` redirects
+  to `quickmap.lroc.im-ldi.com`.
 
 ### 15 Nov, 04:38–04:45 SGT
 

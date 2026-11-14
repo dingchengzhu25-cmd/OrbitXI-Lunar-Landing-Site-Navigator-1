@@ -7,7 +7,7 @@ Read from the challenge Resources tab on 2026-11-14.
 | Resource | Provider | Used in this app |
 |---|---|---|
 | [Horizons System](https://ssd.jpl.nasa.gov/horizons/) | NASA/JPL | Yes — the only data source so far |
-| [Quickmap](https://quickmap.lroc.asu.edu/) | Arizona State University, LRO data | No |
+| [Quickmap](https://quickmap.lroc.im-ldi.com/) (the address `quickmap.lroc.asu.edu` redirects here; checked 2026-11-15) | Arizona State University, LRO data | No |
 | [Moon Trek](https://trek.nasa.gov/moon/) | NASA | No |
 | [Moon Exploration](https://www.asc-csa.gc.ca/eng/astronomy/moon-exploration/) | Canadian Space Agency | No |
 

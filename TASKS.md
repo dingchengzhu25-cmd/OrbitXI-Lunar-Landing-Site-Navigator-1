@@ -32,8 +32,8 @@ Status: todo / doing / blocked / done. Times are SGT.
 | T-26 | Whole-month Horizons test at the two near-polar reference coordinates | Asher | P0 | — | 15 Nov 10:00 | done — 15 Nov 03:58; 721 rows per series; production equals direct Horizons |
 | T-27 | Review the two reference points: read the NASA table, confirm longitude convention, frame and the 0 km assumption, approve wording | Yi | P0 | T-05 | 15 Nov 12:00 | todo |
 | T-28 | Developer smoke run on production with build id, inputs and results recorded | Asher | P0 | T-25 | 15 Nov 10:00 | done — 15 Nov 04:04, 13 checks pass on build d4d8e68; this is not Sean's QA |
-| T-29 | Run Sean's 28-case matrix on production once his files are available locally | Sean, Asher | P0 | T-16 | 15 Nov 16:00 | doing — run by the developer on build 86e8f04, 15 Nov 04:26–04:30; QA20 re-run on b81bca8 at 04:41: 24 PASS, 0 FAIL, 3 BLOCKED (no video), 1 NOT RUN (official form). Not yet confirmed by Sean |
-| T-30 | README: list third-party software and licences, disclose AI use, state azimuth convention (QA20 fail) | Asher | P0 | — | 15 Nov 14:00 | done — 15 Nov 04:41, commit b81bca8; QA20 re-run passes. Asher to confirm the AI-use paragraph matches the team's actual use |
+| T-29 | Run Sean's 28-case matrix on production once his files are available locally | Sean, Asher | P0 | T-16 | 15 Nov 16:00 | doing — run by the developer on build 86e8f04, 15 Nov 04:26–04:30: 23 PASS, 3 BLOCKED (no video), 1 NOT RUN (official form); QA20 re-evaluated as PARTIAL after the README work (T-30). Not yet confirmed by Sean |
+| T-30 | README: list third-party software and licences, disclose AI use, state azimuth convention (QA20 fail) | Asher | P0 | — | 15 Nov 14:00 | doing — README sections added and checked 15 Nov (T-30 log in PROGRESS); remaining: video credits, submission-form links and AI field, Asher's confirmation of the AI paragraph |
 | T-31 | Remaining P0 items of Tan's R2 v2: tooltip format, inline validation, per-series loading and "settings changed" notice | Asher | P1 | T-12 | 15 Nov 13:00 | todo |
 | T-18 | Internal submission | Asher, Sean | P0 | T-15, T-17 | 15 Nov 21:00 | todo |
 

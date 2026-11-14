@@ -49,41 +49,100 @@ npm run build      # production build
 | [SCIENTIFIC_HANDOFF.md](SCIENTIFIC_HANDOFF.md) | Sample data, visibility results, and the science validation worksheet |
 | [DATA_PROVENANCE_HANDOFF.md](DATA_PROVENANCE_HANDOFF.md) | Which NASA data is integrated and verified; what is still needed |
 
-## Credits
+## Credits and compliance
 
-This project is not affiliated with or endorsed by NASA.
+This project is not affiliated with or endorsed by NASA. Last checked: 15 November 2026.
 
-### NASA data and resources
+### NASA Data & Scientific Attribution
 
-| Resource | Use in this project |
+**Integrated — the app's output depends on these:**
+
+| Source | Use |
 |---|---|
-| [NASA/JPL Horizons System](https://ssd.jpl.nasa.gov/horizons/) and its [API](https://ssd-api.jpl.nasa.gov/doc/horizons.html) | Source of every Sun and Earth position shown. Each result links to the exact request. Listed in the challenge Resources. |
-| [NASA NSSDCA, Apollo Landing Site Coordinates](https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html) | Coordinates of the six Apollo validation sites |
-| [JPL Horizons manual](https://ssd.jpl.nasa.gov/horizons/manual.html) | Surface-site example (Tycho crater) used to test the data pipeline |
+| [NASA/JPL Horizons System](https://ssd.jpl.nasa.gov/horizons/), through the [Horizons API](https://ssd-api.jpl.nasa.gov/doc/horizons.html) | Every Sun and Earth position shown (observer tables for a site on the Moon; ephemeris DE441, as reported in each response). Each result in the app links to the exact request. Horizons is listed in the challenge Resources. |
+| [NASA NSSDCA, Apollo Landing Site Coordinates](https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html) | Coordinates of the six Apollo sites offered as validation examples |
+| [JPL Horizons manual](https://ssd.jpl.nasa.gov/horizons/manual.html) | The surface-site example (Tycho crater) used to test the data pipeline |
 
-### Software
+Six unmodified Horizons responses are stored in `src/data/samples/` and four in
+`docs/handoff-data/`, each with its request and retrieval time.
+
+**Researched only — not used by the app:**
+
+| Source | Status |
+|---|---|
+| NASA *Lunar Surface Data Book*, ACD-50044 Rev A (2023), Table A2-2 | Two south-pole regional reference points were transcribed for review. They are not in the app. See [DATA_SOURCES.md](DATA_SOURCES.md). |
+| [LROC QuickMap](https://quickmap.lroc.im-ldi.com/), [NASA Moon Trek](https://trek.nasa.gov/moon/), [CSA Moon Exploration](https://www.asc-csa.gc.ca/eng/astronomy/moon-exploration/) | Listed by the challenge; read for background; not used |
+
+**Not integrated:** LOLA or any other terrain data, SPICE kernels, imagery. The app has no terrain
+model and performs no SPICE calculation.
+
+Review status: a team member compared 74 rows of app output with direct Horizons requests and
+checked two sunrise times; the developer reproduced that comparison. The coordinate frame of cited
+sites against the frame Horizons uses, and the behaviour of visibility windows near the pole, have
+not been validated. Details are in [PROGRESS.md](PROGRESS.md).
+
+### Third-Party Software & Licenses
+
+Licences were read from each package's own licence file and `package.json` in the installed
+version, on 15 November 2026.
 
 | Package | Version | Licence | Use |
 |---|---|---|---|
-| [Next.js](https://nextjs.org) | 16.4.6 | MIT | Web framework and server routes |
+| [Next.js](https://nextjs.org) | 16.4.6 | [MIT](https://github.com/vercel/next.js/blob/canary/license.md) | Web framework and server routes |
 | [React](https://react.dev/) and React DOM | 19.3.0 | MIT | User interface |
-| [Recharts](https://github.com/recharts/recharts) | 3.10.1 | MIT | Charts |
-| [Tailwind CSS](https://tailwindcss.com) | 4.3.3 | MIT | Styling |
-| [Geist and Geist Mono](https://vercel.com/font) typefaces, loaded through `next/font` | — | SIL Open Font License 1.1 | Text |
+| [Recharts](https://github.com/recharts/recharts) | 3.10.1 | [MIT](https://github.com/recharts/recharts/blob/main/LICENSE) | Charts |
+| [Tailwind CSS](https://tailwindcss.com) | 4.3.3 | MIT | Styling (build time) |
 | [TypeScript](https://www.typescriptlang.org/) | 5.9.3 | Apache-2.0 | Development |
 | [Vitest](https://vitest.dev) | 5.1.0 | MIT | Tests |
 | [ESLint](https://eslint.org) with eslint-config-next | 9.39.5 / 16.4.6 | MIT | Code checks |
 
-Exact versions of every package, including indirect ones, are in `package-lock.json`.
-The app is hosted on [Vercel](https://vercel.com). It contains no third-party images, video or audio.
+Packages installed indirectly by the ones above (95 production entries in `package-lock.json`,
+which records every exact version): MIT, ISC, BSD-3-Clause, 0BSD and Apache-2.0 for the code the
+app runs, including the D3 modules that Recharts uses; `caniuse-lite` is CC-BY-4.0; the optional
+image library `sharp` that Next.js installs is Apache-2.0 with LGPL-3.0-or-later components
+(libvips). The app serves no images, so that library processes nothing here.
 
-### Use of AI tools
+No code was copied from other projects into `src/`. The project was started from the
+`create-next-app` template of Next.js (MIT).
 
-- **Code, tests and documentation in this repository** were written with Claude Code (Anthropic)
-  under the direction of the team lead, who reviewed the results. Automated tests and comparisons
-  against direct NASA/JPL Horizons requests are described in [PROGRESS.md](PROGRESS.md).
-- **Team planning, research notes and design documents** were prepared by team members with the
-  help of AI assistants (ChatGPT and Claude). Those documents are not part of the application.
-- **No data shown by the app is AI-generated.** Every number comes from a NASA/JPL Horizons
-  response or is calculated from one by the code in `src/lib`.
-- The app contains no AI-generated images, video or audio, and no NASA logos or branding.
+Hosting: [Vercel](https://vercel.com). Source hosting: GitHub.
+
+### External Media & Credits
+
+| Item | Where | Source and licence |
+|---|---|---|
+| Geist and Geist Mono typefaces | All text; loaded through `next/font/google` | Vercel; [SIL Open Font License 1.1](https://fonts.google.com/specimen/Geist/license) |
+| `src/app/favicon.ico` | Browser tab icon | The default icon that came with the `create-next-app` template; not designed by the team |
+| `docs/screenshots/*.jpg` | Repository only | Screenshots of this app, taken by the team |
+
+The app contains no photographs, NASA imagery, logos, video, music or other audio.
+
+**Demo video: PENDING.** No final video exists yet. Its footage, images, music, narration, captions
+and the tools used to make it, with the licence or permission for each, will be listed here before
+submission. Nothing about it is claimed now.
+
+### AI Assistance Disclosure
+
+AI tools were used throughout this project. What they produced was checked as described below; it
+was not accepted on trust.
+
+| Tool | Used for |
+|---|---|
+| Claude Code (Anthropic) | Writing the application code, tests and repository documentation; running tests, builds and deployments; browser checks of the deployed app; reviewing teammates' documents |
+| ChatGPT (OpenAI) | Project planning and task briefs, team correspondence, research on data sources |
+| AI assistants used by individual team members | Preparing their research notes, science review, design specification, QA plan and video storyboard |
+
+How the output was verified, and what was not:
+
+- Numbers: app output was compared row by row with direct NASA/JPL Horizons requests (see
+  [PROGRESS.md](PROGRESS.md)). No number shown by the app is generated by an AI tool; each comes
+  from a Horizons response or is calculated from one by the code in `src/lib`.
+- Code: automated unit tests, lint, type check and production build run before each release.
+- **Testing was automated or AI-assisted and directed by the developer.** The team's QA test
+  matrix was executed with Claude Code on the deployed app. It has not yet been repeated by a
+  person independently, and this README does not claim that it has.
+- Science: definitions and a sample of results were reviewed by a team member; the open points
+  are listed under "NASA Data & Scientific Attribution" above.
+- The app contains no AI-generated images, video or audio, and no NASA logos or branding. If the
+  demo video uses AI-generated material, it will be marked and listed under "External Media &
+  Credits".
