@@ -1,6 +1,6 @@
 # Progress
 
-Last updated: 15 Nov 2026, 04:35 SGT
+Last updated: 15 Nov 2026, 04:45 SGT
 
 ## Current state
 
@@ -98,7 +98,7 @@ open point is closed on the science side.
 
 QA findings to fix:
 
-- **QA20 (fail):** README credits do not list third-party software and licences or disclose AI use (T-30).
+- **QA20:** failed on build `86e8f04` (README credits incomplete). Fixed in `b81bca8`; re-run passed at 04:41. The AI-use paragraph is to be confirmed by Asher.
 - Changing the form after results are shown gives no "settings changed" notice; results stay
   correctly labelled (T-31).
 - Coordinate errors are shown after Compare, not beside the field (T-31).
@@ -137,7 +137,6 @@ Not ready to record: no south-pole point is on production yet (T-27, T-10).
 ## Blockers
 
 - Review of the two reference points before they can go to production (Yi, T-27).
-- README credits and AI disclosure (T-30).
 - Final video (Zhang, T-17) and review of the official form (T-18).
 - Decisions for the video: demo sites and dates, recording plan, voice, editor (T-23).
 
@@ -149,6 +148,13 @@ ESLint tooling (`typescript-eslint` packages). `npm audit --omit=dev` reports 0.
 deployed app is affected, so no update was made.
 
 ## Log
+
+### 15 Nov, 04:38–04:45 SGT
+
+- README: NASA resources, software and licences, use of AI tools, angle and time conventions.
+  Commit `b81bca8` pushed 04:40:57; Vercel status success 04:41:11; footer showed `b81bca8`.
+- QA20 re-run: README sections present, 15 links open signed out. Matrix: 24 PASS, 0 FAIL,
+  3 BLOCKED, 1 NOT RUN.
 
 ### 15 Nov, 04:20–04:35 SGT
 
