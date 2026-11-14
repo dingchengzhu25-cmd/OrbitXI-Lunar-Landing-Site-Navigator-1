@@ -47,9 +47,15 @@ export interface ParsedEphemeris {
   points: EphemerisPoint[];
 }
 
+export type DataSourceKind = "live" | "cached" | "archive";
+
 export interface EphemerisResponse extends ParsedEphemeris {
-  /** "live" = fetched from Horizons for this request; "archive" = stored real response. */
-  source: "live" | "archive";
+  /**
+   * "live"    = fetched from Horizons for this request.
+   * "cached"  = an earlier live response reused from server memory (retrievedAtUtc is the original time).
+   * "archive" = a real response stored in the repository.
+   */
+  source: DataSourceKind;
   /** When the Horizons response was retrieved (ISO 8601, UTC). */
   retrievedAtUtc: string;
   request: HorizonsRequest;

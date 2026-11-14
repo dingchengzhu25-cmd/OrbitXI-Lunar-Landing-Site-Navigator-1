@@ -42,9 +42,12 @@ src/app/api/sample/route.ts       Archived real response, labelled as archive
 src/components/                   Site pickers, charts, comparison table, provenance, limitations
 src/lib/horizons/request.ts       Input validation, limits, Horizons parameter builder
 src/lib/horizons/parse.ts         Observer-table parser and header metadata
-src/lib/horizons/client.ts        Fetch, timeout, error mapping, response-vs-request checks
+src/lib/horizons/client.ts        Fetch, timeout, error mapping, cache and source labels
 src/lib/sites.ts                  Site presets, each with a cited coordinate source
-src/lib/windows.ts                Geometric above-threshold intervals and summaries
+src/lib/visibility.ts             Sampled geometric visibility, estimated edges, site comparison
+src/lib/comparison.ts             Loads the four series independently; browser-side checks
+src/lib/horizons/cache.ts         Bounded TTL cache, request coalescing, concurrency limit
+src/lib/horizons/verify.ts        Response-vs-request check shared by server and browser
 src/lib/samples.ts                Loader for archived responses
 src/data/samples/                 Unmodified Horizons responses with retrieval metadata
 scripts/fetch-sample.mjs          Reproducible capture of a real response
@@ -61,8 +64,9 @@ most 2000 rows, dates 1950–2100, height −10 to 20 km. These are app choices,
 - Horizons timeout → 504; unreachable, HTTP error, no table, unexpected format, or a table that
   does not match the requested body or site → 502. Horizons answers HTTP 200 even for failed
   queries, so success is decided by the presence and validity of the data table.
-- The UI shows the message and no chart. It never substitutes data. The user may explicitly load
-  an archived real response, which is banner-labelled with its retrieval time.
+- The UI names each failed series, leaves it blank, and still shows the series that loaded. It
+  never substitutes data. The user may explicitly load archived real responses, which are
+  labelled ARCHIVED with their retrieval time and only ever shown for the sites they belong to.
 
 ## Decisions
 
@@ -71,6 +75,7 @@ most 2000 rows, dates 1950–2100, height −10 to 20 km. These are app choices,
 | Horizons as the only MVP data source | Named in the challenge Resources; gives Sun and Earth angles for a Moon-surface site directly |
 | Server-side proxy instead of browser calls | No CORS header observed |
 | No terrain model in MVP | Out of reach in two days for one developer; stated clearly in the UI |
-| In-memory cache (6 h) plus `s-maxage=3600` | A comparison makes four Horizons queries; repeats should not hit JPL again. Cached entries keep their original retrieval time |
-| Client sends the four queries one at a time | Horizons rate limits are undocumented; stay polite |
+| In-memory cache (6 h, 200 entries), no CDN caching | Repeats should not hit JPL again, and every response must carry an honest LIVE/CACHED label. Per-instance only on serverless; lost on cold start |
+| At most 2 concurrent Horizons calls per server instance and per browser | Horizons rate limits are undocumented; stay polite |
+| Each of the four series loads and fails on its own | A partial failure is shown by name instead of blanking or faking the comparison |
 | Windows computed in the browser from the returned series | Keeps the server a thin, verifiable proxy |

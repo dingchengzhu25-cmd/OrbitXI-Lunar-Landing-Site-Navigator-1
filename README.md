@@ -27,7 +27,7 @@ Requires Node.js 20.19 or newer. No API keys or environment variables are needed
 ```bash
 npm install
 npm run dev        # http://localhost:3000
-npm test           # parser and validation tests against real Horizons responses
+npm test           # 93 tests; the network is replaced by real archived Horizons responses
 npm run build      # production build
 ```
 

@@ -1,4 +1,4 @@
-import { assertMatchesRequest } from "./horizons/client";
+import { assertMatchesRequest } from "./horizons/verify";
 import { parseHorizonsObserverJson } from "./horizons/parse";
 import type { EphemerisResponse, HorizonsRequest } from "./horizons/types";
 import apollo11Earth from "@/data/samples/apollo11-earth-2026-11-14_30d_60m.json";

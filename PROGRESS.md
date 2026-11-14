@@ -1,40 +1,43 @@
 # Progress
 
-Last updated: 14 Nov 2026, 15:00 SGT
+Last updated: 14 Nov 2026, 15:15 SGT
 
 ## Current state
 
-The app compares two lunar sites over the same date range: Sun and Earth elevation charts per
-site, a table of geometric visibility metrics, and provenance for every request. It runs locally
-from a production build against live NASA/JPL Horizons data. Not yet deployed. No south-pole
-sites yet — waiting on cited coordinates.
+Phase 2 is complete locally and on GitHub. The app compares two lunar sites over the same UTC
+range: Sun and Earth elevation charts (Site A vs Site B), sampled geometric visibility with
+estimated edges, a comparison summary, per-series source labels, and limitations. It is **not
+deployed**. There are **no lunar south-pole candidate sites** yet.
 
 ## Implemented and verified
 
 | Feature | How it was verified |
 |---|---|
-| Two-site comparison, Sun and Earth, live data | Local production build; Apollo 11 vs Apollo 17, 30 days hourly; four live queries; no console errors |
-| Site presets with cited coordinates (six Apollo sites, NSSDCA) | Coordinates copied from the NASA page read on 14 Nov; each preset links its source |
-| Custom coordinates, labelled as unverified | Seen in the local app |
-| Geometric windows: time above 0°, longest window, next rise/set, Sun-and-Earth overlap | 14 unit tests, including checks on real Horizons data |
-| Server route `/api/ephemeris` (Sun and Earth) | Values equal to direct Horizons requests |
-| Near-pole queries (latitude −89.5° and −90°) | Direct and through the app; tables returned |
-| Response caching (in-memory, plus CDN header) | Repeat query returned in 5 ms with the original retrieval time |
-| Input validation and readable errors | Unit tests; HTTP 400 with a message |
-| Horizons "HTTP 200 but no data" detected as an error | Unit test on a real failed response |
-| Response checked against requested body, site, and frame | Unit tests |
-| Archived real samples, clearly labelled | Five sample ids return `source: "archive"` with retrieval time |
-| Tests, lint, typecheck, production build | 46 tests pass; ESLint clean; `tsc` clean; `next build` succeeds |
+| Sun and Earth elevation for two sites, live data | Local production build in a browser: Apollo 11 vs Apollo 17, 30 days hourly, 4 of 4 series LIVE, no console errors |
+| App values equal Horizons values | Apollo 17 site, 20–22 Nov, 2-hour step: 25 Sun rows and 25 Earth rows compared with a direct Horizons request, 0 mismatches |
+| Partial failure is shown, not hidden | Browser: invalid Site B longitude → "2 of 4 series", Site B marked FAILED with the reason, Site A still charted, differences "not available" |
+| Source labels LIVE / CACHED / ARCHIVED with retrieval time | Browser: repeat query showed CACHED with the original time; archive button showed ARCHIVED |
+| Custom test location labelled UNVERIFIED / EXPERIMENTAL | Browser: 0° E, −89.5° entered as Site B; label shown in the picker and the summary |
+| Geometric visibility (Sun, Earth, joint), sampled windows with estimated edges | 26 unit tests: always/never visible, multiple crossings, range limits, exactly 0°, gaps, misaligned timestamps, missing series, thresholds, two-site comparison, real data |
+| Each series checked against requested body and site, on server and in browser | Unit tests (wrong body, wrong site, tampered request) |
+| Cache, request coalescing, concurrency limit | Unit tests with a fake clock and a stubbed network |
+| API error handling (timeout, unreachable, 503, non-JSON, no table, wrong site, bad input) | Unit tests on the client and on both route handlers |
+| Site presets with cited coordinates (six Apollo sites, NSSDCA; Tycho test fixture) | Coordinates copied from the NASA page read on 14 Nov |
+| Tests, lint, typecheck, production build | 93 tests pass; ESLint clean; `tsc --noEmit` clean; `next build` succeeds |
 
-## In progress
+## Not verified
 
-- Deployment to Vercel (T-04) — needs Asher to sign in and import the repository.
+- Anything on Vercel: no deployment exists.
+- Behaviour on phones (layout is responsive by design, not tested on a device).
+- Whole-month queries at polar latitudes (only 6-hour and 3-day polar tests so far).
+- Scientific correctness of thresholds, frames, and site heights — awaiting Yi.
+- Horizons behaviour under sustained load; its rate limits are undocumented.
 
 ## Not implemented
 
-- South-pole candidate presets (waiting on T-05).
-- Science-approved visibility thresholds; the current "centre above 0°" rule is provisional (T-06).
-- Shaded windows on the charts, sky-position view, animation.
+- South-pole candidate presets (T-05).
+- Science-approved thresholds (T-06).
+- Shaded windows on charts, sky-position view, animation.
 - Tan's UI specification.
 - Terrain-aware visibility — out of scope for the MVP.
 
@@ -44,34 +47,41 @@ sites yet — waiting on cited coordinates.
 |---|---|
 | Public app URL | Not yet available |
 | Repository | <https://github.com/Zdcgaryland69/OrbitXI-Lunar-Landing-Site-Navigator> |
-| Screenshots | None saved to the repository yet |
-| Approved wording | "Geometric Sun and Earth elevation from NASA/JPL Horizons; terrain not included." |
+| Screenshots | `docs/screenshots/` — development screenshots from the local build, for reference only |
+| Approved wording | "Geometric centre-of-disc visibility only. Terrain obstruction, solar panel output and communication link quality are NOT modeled." |
 
-Not ready to record: there is no public URL and no south-pole site yet.
+Not ready to record: there is no public URL and no south-pole site.
 
 ## Blockers
 
 - Vercel sign-in and import (Asher, T-04).
 - Two south-pole sites with cited coordinates (Baoyi, T-05).
-- Sunlit and Earth-visible threshold definitions and frame confirmation (Yi, T-06).
+- Thresholds and frame confirmation (Yi, T-06).
+
+## Dependency audit (14 Nov)
+
+`npm audit` reports 7 moderate findings. All come from one advisory (minimatch,
+GHSA-g3hv-75wg-m249, denial of service through crafted glob patterns) reached only through the
+ESLint tooling (`typescript-eslint` packages). `npm audit --omit=dev` reports 0. Nothing in the
+deployed app is affected, so no update was made.
 
 ## Log
 
-### 14 Nov, 14:35–15:00 SGT — Asher with Claude
+### 14 Nov, 15:00–15:15 SGT — Phase 2
 
-- Added Earth series, second site, comparison table, and geometric window calculations.
-- Added six Apollo landing sites as presets, coordinates from the NASA NSSDCA page.
-- Tested Horizons at latitude −89.5° and −90° (generic coordinates, not candidate sites): works.
-- Added response caching. Saved real samples for Apollo 11 and Apollo 17.
-- Plausibility check: Apollo 17 lies about 7.3° east of Apollo 11, so sunrise should come roughly
-  14 hours earlier; the app shows 13.3 hours. Not a scientific validation.
+- Rewrote the visibility module: sample-based flags, windows split at gaps, estimated edges
+  bracketed by their two samples, configurable provisional thresholds, joint visibility only on
+  identical timestamps.
+- Added coalescing and a concurrency limit to the Horizons client; cached responses are now
+  labelled CACHED. Removed the CDN cache header because a CDN copy would still say "live".
+- Each of the four series now loads and fails independently.
+- Reorganised the page into numbered sections; charts now overlay Site A and Site B per body.
 
-### 14 Nov, 14:09–14:30 SGT — Asher with Claude
+### 14 Nov, 14:35–15:00 SGT
 
-- Scaffolded Next.js 16 + TypeScript + Tailwind; added Recharts and Vitest.
-- Tested Horizons for Sun and Earth at the manual's Tycho example site; saved two real 30-day
-  samples and one real error response.
-- Built validation, parser, Horizons client, two API routes, chart page.
-- A unit test caught a floating-point error in longitude normalisation (348.8 became
-  348.79999999999995); fixed before any request used it.
+- Added Earth series, second site, comparison table, Apollo presets, caching, polar tests.
+
+### 14 Nov, 14:09–14:30 SGT
+
+- Scaffolded the app; verified Horizons queries; built the Sun elevation vertical slice.
 - Development started about five hours after the official 09:00 start.

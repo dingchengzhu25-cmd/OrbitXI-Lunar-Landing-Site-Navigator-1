@@ -45,6 +45,7 @@ Unless a row says otherwise, tests used the Horizons manual's own example site (
 | Earth, 30 days hourly | 721 rows, ordered, hourly; elevation 37.88° to 52.50° |
 | Sun and Earth at latitude −89.5°, and Sun at −90°, 6 h (generic coordinates, not candidate sites) | Tables returned; values change smoothly |
 | Sun and Earth, Apollo 11 and Apollo 17 sites, 30 days hourly | 721 rows each |
+| Sun and Earth, Apollo 17 site, 20–22 Nov, 2 h step, through the app and directly | 25 rows each; app output identical to Horizons, 0 mismatches |
 
 Facts read from the response headers:
 
@@ -73,7 +74,7 @@ Earth-orientation predictions.
 
 ### RESEARCHED BUT UNTESTED
 
-- Whole-month ranges at polar latitudes (only 6-hour polar tests so far).
+- Whole-month ranges at polar latitudes (only 6-hour and 3-day polar tests so far).
 - Ranges longer than 30 days and steps shorter than 30 minutes.
 - Behaviour under many requests in quick succession.
 
@@ -93,11 +94,49 @@ Earth-orientation predictions.
 The NSSDCA coordinates are in a DE421-based mean-Earth frame; Horizons reports `MEAN_ME` with
 DE441. Whether the difference matters at our precision is a question for Yi.
 
-## Visibility windows (provisional)
+## Geometric visibility (PROVISIONAL)
 
-The app reports a body as "above 0°" when the elevation of its disc centre is greater than 0°.
-Rise and set times are linear interpolations between adjacent samples, so they are accurate to
-within one sampling step at best. This rule is a placeholder until Yi defines thresholds.
+Implemented in `src/lib/visibility.ts`. Thresholds are configurable and marked PROVISIONAL until
+Yi reviews them.
+
+| Term | Current definition |
+|---|---|
+| Sun geometrically visible | Sun disc-centre elevation > 0° at a sample |
+| Earth geometrically visible | Earth disc-centre elevation > 0° at a sample |
+| Joint visibility | Both true at the same sampled UTC time |
+| Boundary case | A sample within ±1° of the threshold; counted and shown, because its classification is sensitive |
+
+How results are derived and what they can claim:
+
+- **Sampled, not continuous.** Visibility is decided per sample. "N of M samples" is a count, not
+  a measured duration.
+- **Estimated edges.** A rise or set is placed by straight-line interpolation between the two
+  adjacent samples where the state changed. It is shown with "≈" together with the two sample
+  times that bracket it. The true geometric transition lies within that one sampling interval,
+  assuming elevation changes smoothly between samples.
+- **Durations are estimates** built from those edges. A window that begins or ends at the edge of
+  the queried range is a lower bound.
+- **Exactly 0°** counts as not visible.
+- **Missing samples are never filled in.** A gap ends a window; no edge is estimated across it.
+- **Joint visibility requires identical timestamps** in both series; otherwise it is not computed.
+- **A failed series stays empty.** Its metrics read "not available" and no difference between
+  sites is reported for it.
+
+The Sun's disc is about 0.5° across and Earth's about 1.9° as seen from the Moon (general
+astronomy values, not taken from our data), so "centre above 0°" differs from "any part of the
+disc above 0°" for some minutes to hours near the poles. Which rule to use is Yi's decision.
+
+## Caching and request handling
+
+- In-memory cache in the server process: 200 entries at most, 6-hour lifetime, keyed by the exact
+  Horizons URL built from the validated, normalised request.
+- Identical requests in flight share one Horizons call. At most 2 Horizons calls run at once per
+  server instance, and the browser sends at most 2 requests at a time.
+- A reused response is labelled CACHED and keeps its original retrieval time. Failures are not cached.
+- No HTTP/CDN caching: a CDN copy would still be labelled "live".
+- **Limitation:** on Vercel each serverless instance has its own memory and loses it on a cold
+  start. The cache reduces repeat queries; it does not guarantee them away. No database or
+  external cache is used.
 
 ## What the elevation value means
 

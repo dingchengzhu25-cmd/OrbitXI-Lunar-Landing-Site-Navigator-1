@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import noMatch from "./__fixtures__/no-match-response.json";
-import { assertMatchesRequest } from "./client";
+import { assertMatchesRequest } from "./verify";
 import { horizonsDateToIso, parseHorizonsObserverJson } from "./parse";
 import { buildHorizonsParams } from "./request";
 import { HorizonsError, type HorizonsRequest } from "./types";
