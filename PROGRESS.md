@@ -1,6 +1,6 @@
 # Progress
 
-Last updated: 14 Nov 2026, 17:05 SGT
+Last updated: 14 Nov 2026, 16:58 SGT
 
 ## Current state
 
@@ -39,6 +39,7 @@ site exists at <https://orbitxi-lunar-landing-site-navigato.vercel.app>. There a
 - Each automatic deployment is checked after the push and noted in the log below.
 
 ## Not verified
+
 - Behaviour on phones (layout is responsive by design, not tested on a device).
 - Whole-month queries at polar latitudes (only 6-hour and 3-day polar tests so far).
 - Scientific correctness of thresholds, frames, and site heights — awaiting Yi (see `SCIENTIFIC_HANDOFF.md`). Unit tests passing is not scientific validation.
@@ -77,13 +78,16 @@ deployed app is affected, so no update was made.
 
 ## Log
 
-### 14 Nov, 16:35–17:05 SGT
+### 14 Nov, 16:35–16:58 SGT
 
 - Verified production independently after the manual deployment.
 - Repository moved to its canonical address; links updated in the app and documents.
 - Wrote `SCIENTIFIC_HANDOFF.md` (for Yi) and `DATA_PROVENANCE_HANDOFF.md` (for Baoyi), with a
   small real data set in `docs/handoff-data/` and a test pinning the quoted numbers to it.
 - Recorded two leads for south-pole candidate sources; nothing added to the app.
+- Automatic deployment verified: commit 95a46cc pushed 16:54:22; GitHub showed the Vercel status
+  as success by 16:54:35; production served the new build by 16:54:47. Live Horizons data on
+  production again matched a direct Horizons request (0 mismatches).
 
 ### 14 Nov, 15:15–15:25 SGT
 
