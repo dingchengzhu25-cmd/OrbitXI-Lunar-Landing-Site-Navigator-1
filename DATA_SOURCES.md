@@ -31,7 +31,8 @@ QUANTITIES='4'  TIME_TYPE='UT'  CSV_FORMAT='YES'
 
 ### VERIFIED by live requests on 2026-11-14
 
-All tests used the Horizons manual's own example site (Tycho crater, `348.8, -43.3, 0`), which is
+Unless a row says otherwise, tests used the Horizons manual's own example site (Tycho crater,
+`348.8, -43.3, 0`), which is
 **not** a landing candidate.
 
 | Test | Result |
@@ -42,6 +43,9 @@ All tests used the Horizons manual's own example site (Tycho crater, `348.8, -43
 | Invalid target | HTTP 200 with "No matches found" and no table — must be treated as an error |
 | Sun, 30 days hourly | 721 rows, ordered, hourly; elevation −45.27° to 48.21° |
 | Earth, 30 days hourly | 721 rows, ordered, hourly; elevation 37.88° to 52.50° |
+| Sun and Earth at latitude −89.5°, and Sun at −90°, 6 h (generic coordinates, not candidate sites) | Tables returned; values change smoothly |
+| Sun and Earth, Apollo 11 and Apollo 17 sites, 30 days hourly | 721 rows each |
+
 Facts read from the response headers:
 
 - API signature: `NASA/JPL Horizons API`, version 1.2.
@@ -59,13 +63,11 @@ Facts read from the response headers:
 Plausibility check: at latitude −43.3° the Sun can rise to about 90° − 43.3° ± 1.5° ≈ 48°, which
 matches the 48.21° maximum. This is a sanity check, not a scientific validation.
 
-| Sun and Earth at latitude −89.5°, and Sun at −90° (generic coordinates) | Tables returned; values vary smoothly |
-| Sun and Earth, Apollo 11 and Apollo 17 sites, 30 days hourly | 721 rows each |
-
 ### Archived samples
 
 `src/data/samples/` holds six unmodified responses (Sun and Earth for the Tycho example, Apollo 11,
-and Apollo 17 sites; 30 days hourly; retrieved 2026-11-14 between 06:14 and 06:52 UTC) with the exact request and retrieval time. Recreate with
+and Apollo 17 sites; 30 days hourly; retrieved 2026-11-14 between 06:14 and 06:52 UTC) with the
+exact request and retrieval time. Recreate with
 `scripts/fetch-sample.mjs`. Values may differ very slightly on later retrieval if JPL updates
 Earth-orientation predictions.
 
