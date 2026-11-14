@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ElevationChart, SITE_A_COLOR, SITE_B_COLOR } from "./ElevationChart";
+import { ElevationChart, LineSample, SITE_A_COLOR, SITE_B_COLOR } from "./ElevationChart";
 import {
   expectedSiteFrom,
   loadComparison,
@@ -12,6 +12,8 @@ import {
   type SiteLoad,
 } from "@/lib/comparison";
 import type { ApiErrorBody, DataSourceKind, EphemerisResponse } from "@/lib/horizons/types";
+import { LIMITS } from "@/lib/horizons/request";
+import { planRequest } from "@/lib/requestPlan";
 import { defaultSiteIds, findPreset, hasSouthPoleCandidates, KIND_LABEL, presetsByGroup } from "@/lib/sites";
 import { compareSites, PROVISIONAL_CONFIG, type Visibility, type WindowEdge } from "@/lib/visibility";
 
@@ -86,14 +88,14 @@ const card = "rounded-lg border border-slate-800 bg-slate-900/60 p-4";
 const field = "mt-1 w-full rounded border border-slate-700 bg-slate-900 px-2 py-1.5 text-sm text-slate-100";
 const labelCls = "block text-xs font-medium uppercase tracking-wide text-slate-400";
 
-function SitePicker({ title, color, value, onChange }: { title: string; color: string; value: SiteInput; onChange: (v: SiteInput) => void }) {
+function SitePicker({ site, value, onChange }: { site: "A" | "B"; value: SiteInput; onChange: (v: SiteInput) => void }) {
   const preset = value.presetId === CUSTOM ? undefined : findPreset(value.presetId);
   const edit = (patch: Partial<SiteInput>) => onChange({ ...value, ...patch, presetId: CUSTOM });
   return (
     <fieldset className={card}>
       <legend className="px-1 text-sm font-semibold text-slate-100">
-        <span className="mr-2 inline-block h-2.5 w-2.5 rounded-full" style={{ background: color }} />
-        {title}
+        <LineSample site={site} />
+        Site {site} <span className="font-normal text-slate-400">— {site === "A" ? "solid" : "dashed"} line on the charts</span>
       </legend>
       <label className={labelCls}>
         Location
@@ -236,6 +238,8 @@ export function SiteComparison() {
   const [stepMin, setStepMin] = useState("60");
   const [status, setStatus] = useState<Status>({ kind: "idle" });
 
+  const plan = planRequest(days, stepMin);
+
   async function run(inputs: [SiteInput, SiteInput], fetcher: SeriesFetcher) {
     setStatus({ kind: "loading" });
     const expected = inputs.map((s) => expectedSiteFrom(s.lon, s.lat, s.alt)) as [
@@ -254,12 +258,16 @@ export function SiteComparison() {
 
   function queryLive(e: React.FormEvent) {
     e.preventDefault();
-    const d = Number(days);
-    if (!start || !Number.isInteger(d) || d < 1) {
-      setStatus({ kind: "invalid", message: "Enter a start date and a whole number of days (1 or more)." });
+    // Checked here as well as on the server, so no request is sent that the server would refuse.
+    if (!start) {
+      setStatus({ kind: "invalid", message: "Enter a start date." });
       return;
     }
-    const stop = addDaysUtc(start, d);
+    if (!plan.ok) {
+      setStatus({ kind: "invalid", message: plan.message });
+      return;
+    }
+    const stop = addDaysUtc(start, plan.days);
     const inputs: [SiteInput, SiteInput] = [siteA, siteB];
     void run(inputs, (i, body) =>
       getJson(
@@ -304,8 +312,8 @@ export function SiteComparison() {
             1. Choose Sites
           </h2>
           <div className="grid gap-4 md:grid-cols-2">
-            <SitePicker title="Site A" color={SITE_A_COLOR} value={siteA} onChange={setSiteA} />
-            <SitePicker title="Site B" color={SITE_B_COLOR} value={siteB} onChange={setSiteB} />
+            <SitePicker site="A" value={siteA} onChange={setSiteA} />
+            <SitePicker site="B" value={siteB} onChange={setSiteB} />
           </div>
           {!hasSouthPoleCandidates() && (
             <p className="mt-2 rounded border border-slate-700 bg-slate-900/40 p-2 text-xs text-slate-300">
@@ -332,6 +340,7 @@ export function SiteComparison() {
             <label className={labelCls}>
               Sample every
               <select className={field} value={stepMin} onChange={(e) => setStepMin(e.target.value)}>
+                <option value="10">10 minutes</option>
                 <option value="30">30 minutes</option>
                 <option value="60">1 hour</option>
                 <option value="120">2 hours</option>
@@ -342,10 +351,27 @@ export function SiteComparison() {
           <p className="mt-2 text-xs text-slate-500">
             Both sites use the same start, end and sampling interval. A lunar day lasts about 29.5 Earth days.
           </p>
+          {plan.ok ? (
+            <p id="request-size" data-testid="request-size" className="mt-1 text-xs text-slate-400">
+              This request: {plan.samplesPerSeries.toLocaleString("en-US")} samples per series, four series (Sun and
+              Earth for each site). Limits: {LIMITS.maxPoints.toLocaleString("en-US")} samples per series and{" "}
+              {LIMITS.maxSpanDays} days.
+            </p>
+          ) : (
+            <p
+              id="request-size"
+              data-testid="request-size"
+              role="alert"
+              className="mt-1 rounded border border-amber-500/50 bg-amber-950/30 p-2 text-xs text-amber-200"
+            >
+              <strong>Not sent — outside the request limits.</strong> {plan.message}
+            </p>
+          )}
           <div className="mt-4 flex flex-wrap items-center gap-3">
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || !plan.ok}
+              aria-describedby="request-size"
               className="rounded bg-sky-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-sky-400 disabled:opacity-50"
             >
               {loading ? "Querying NASA/JPL Horizons…" : "Compare sites"}
@@ -487,10 +513,10 @@ export function SiteComparison() {
                   <tr className="border-b border-slate-700 text-xs uppercase tracking-wide text-slate-400">
                     <th className="py-2 pr-3 font-medium">Geometric visibility</th>
                     <th className="py-2 pr-3 font-medium" style={{ color: SITE_A_COLOR }}>
-                      A: {sites[0].label}
+                      <LineSample site="A" />A (solid): {sites[0].label}
                     </th>
                     <th className="py-2 font-medium" style={{ color: SITE_B_COLOR }}>
-                      B: {sites[1].label}
+                      <LineSample site="B" />B (dashed): {sites[1].label}
                     </th>
                   </tr>
                 </thead>

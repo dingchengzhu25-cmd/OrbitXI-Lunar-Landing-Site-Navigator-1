@@ -1,6 +1,8 @@
 import { SiteComparison } from "@/components/SiteComparison";
 
 export default function Home() {
+  // Set by Vercel at build time; absent in local builds.
+  const sha = process.env.VERCEL_GIT_COMMIT_SHA;
   return (
     <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">
       <header className="mb-6">
@@ -17,6 +19,9 @@ export default function Home() {
       <footer className="mt-8 border-t border-slate-800 pt-4 text-xs text-slate-500">
         Ephemeris data: NASA/JPL Horizons System (ssd.jpl.nasa.gov/horizons). This project is not affiliated with or
         endorsed by NASA.
+        <span data-testid="build-id" className="mt-1 block">
+          Build: {sha ? sha.slice(0, 7) : "local (no commit recorded)"}
+        </span>
       </footer>
     </main>
   );
