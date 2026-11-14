@@ -34,13 +34,21 @@ It has not been pushed. It changes `src/lib/sites.ts`, `src/lib/sites.test.ts` a
 
 | # | Gate | Owner | State |
 |---|---|---|---|
-| 1 | The two rows are read from the NASA PDF itself by someone on the team | Asher or Yi | open — the developer's computer received HTTP 403 from NASA NTRS on 15 Nov and could not read it |
-| 2 | Longitude convention of the table (east-positive, ±180°) confirmed from the document | Yi | open |
-| 3 | Frame of the table compared with Horizons `MEAN_ME` | Yi | open |
+| 1 | The two rows are read from the NASA PDF itself by someone on the team | Asher or Yi | open for the PDF (HTTP 403 from NASA NTRS). **Corroborated 15 Nov** from NASA GSFC PGDA map headers: both coordinates equal the map-tile centres to the printed precision (`DATA_SOURCES.md`) |
+| 2 | Longitude convention of the table (east-positive, ±180°) confirmed from the document | Yi | supported by the PGDA maps under the usual polar-stereographic convention; formal confirmation open |
+| 3 | Frame of the table compared with Horizons `MEAN_ME` | Yi | source frame identified as Moon ME, DE421 (PGDA); size of the difference from Horizons `MEAN_ME` (DE441) not quantified — open |
 | 4 | Height: accept the 0 km assumption with its wording, or supply a value with a source | Yi | open |
 | 5 | Wording of the badge and notice approved | Yi, Asher | open |
 | 6 | Horizons returns a full month for both points | developer | done 15 Nov — 721 hourly rows per series; production output equal to direct Horizons |
 | 7 | Tests, lint, type check, build | developer | done on the branch |
+
+Finding of 15 Nov that affects the wording (gate 5): the points are centres of NASA PGDA
+elevation-map tiles (20–21 km squares). The branch currently says "centre of a named region
+polygon". Before merging, the label should be settled against Appendix A2.1 of the NASA document;
+"centre of the NASA elevation-map tile for the region" is what the data shows.
+
+`main` has moved on since the branch was cut, so the branch must be rebased or merged normally
+(the fast-forward command below will be refused).
 
 ## How to merge
 

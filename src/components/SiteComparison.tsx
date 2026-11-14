@@ -499,7 +499,7 @@ export function SiteComparison() {
             </p>
             <p className="mt-2 text-xs leading-relaxed text-slate-400">
               <span className="rounded bg-amber-500/15 px-1.5 py-0.5 font-semibold text-amber-300">{CONFIG.status}</span>{" "}
-              thresholds, pending scientific review: Sun visible when its centre is above {CONFIG.sunThresholdDeg}°;
+              thresholds, reviewed by the team for the tested cases only: Sun visible when its centre is above {CONFIG.sunThresholdDeg}°;
               Earth visible when its centre is above {CONFIG.earthThresholdDeg}°; joint when both hold at the same
               sample. A sample exactly on the threshold counts as not visible. Counts are of samples; durations and
               rise/set times marked “≈” are estimates by straight-line interpolation between two adjacent samples, so
@@ -664,7 +664,14 @@ export function SiteComparison() {
               </li>
               <li>This is not a solar-power or temperature estimate.</li>
               <li>Earth above the horizon does not guarantee a working communication link.</li>
-              <li>Visibility thresholds are provisional and have not yet been scientifically reviewed.</li>
+              <li>
+                The visibility rule (disc centre above 0°) was reviewed by the team&apos;s science lead for two
+                Apollo sites only. It has not been validated near the lunar poles and stays provisional.
+              </li>
+              <li>
+                Preset heights are assumed to be 0 km. A site on high ground sees a lower horizon, which this
+                app does not calculate.
+              </li>
               <li>All times are UTC. The Moon has no atmosphere, so no refraction is applied.</li>
             </ul>
           </div>

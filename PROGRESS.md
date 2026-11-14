@@ -1,6 +1,6 @@
 # Progress
 
-Last updated: 15 Nov 2026, 04:50 SGT
+Last updated: 15 Nov 2026, 05:10 SGT
 
 ## Current state
 
@@ -107,9 +107,10 @@ QA findings to fix:
 ## Not verified
 
 - Behaviour on a real phone (375 px emulation only; the horizon label overlaps the lines slightly at that width).
-- The two NASA table rows for the reference points: the NASA document could not be opened from the
-  development computer (HTTP 403), so the numbers are as supplied by Asher.
-- Longitude convention, frame and height of those points (T-27).
+- The NASA table for the reference points has still not been read directly (HTTP 403). The two
+  coordinates were corroborated from NASA GSFC PGDA map headers: they are the map-tile centres
+  (`DATA_SOURCES.md`). Open: formal longitude convention, frame difference from Horizons, real
+  height and its effect on the horizon (T-27).
 - Rise and set times near the pole: 107–129 of 721 hourly samples per series lie within ±1° of the
   horizon, so the windows are sensitive to threshold, height and terrain.
 - Scientific correctness of thresholds, frames, and site heights — awaiting Yi (see `SCIENTIFIC_HANDOFF.md`). Unit tests passing is not scientific validation.
@@ -149,6 +150,19 @@ ESLint tooling (`typescript-eslint` packages). `npm audit --omit=dev` reports 0.
 deployed app is affected, so no update was made.
 
 ## Log
+
+### 15 Nov, 04:55–05:10 SGT — Round 3
+
+- Reference points: read the GeoTIFF headers of NASA GSFC PGDA Site06 and Site23 surface maps.
+  Tile centres (84000, 110000) m and (−500, 121500) m convert to −85.43810°, +37.36667° and
+  −85.99478°, −0.23578°: the supplied coordinates. Frame stated by PGDA: Moon ME, DE421.
+- README: corrected the statement that every number comes from Horizons. It now separates Horizons
+  output, values calculated by this project's code, separately sourced coordinates, and assumed
+  heights and parameters; and no longer states which AI tools each teammate used.
+- App text: the limitation line now says the visibility rule was reviewed for two Apollo sites only
+  and is not validated near the poles; a line on the assumed 0 km height was added. No change to
+  calculations, presets or charts.
+- The reference-point branch stays local.
 
 ### 15 Nov, 04:43–04:50 SGT
 

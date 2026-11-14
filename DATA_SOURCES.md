@@ -112,6 +112,43 @@ Earth-orientation predictions.
 | South-pole regional reference points: Nobile Rim 1 (−85.4381°, +37.36667°), Malapert Massif (−85.9948°, −0.23578°) | NASA Artemis Campaign Development, *Lunar Surface Data Book*, ACD-50044 Rev A (2023), Appendix A2, Table A2-2, rows R06 / Site06 and R23 / Site23, [NASA NTRS](https://ntrs.nasa.gov/api/citations/20230007818/downloads/ACD-50044%20Lunar%20Surface%20Data%20Book%20Rev%20A.pdf) | **RESEARCHED, NOT IN THE APP.** Supplied by Asher on 15 Nov as a supplement to Baoyi's inventory. Centres of region polygons in a 2023 reference table; not exact landing points and not NASA-approved landing sites. The table gives no height. The developer could not open the PDF (HTTP 403) and has not re-read the rows. Longitude convention and frame not confirmed. |
 | South-pole candidates | **None** | Both names appear in NASA's October 2024 list of nine Artemis III candidate regions (per Asher's research; that release gives no coordinates). The 2023 points are not claimed to be the centres of the 2024 regions. |
 
+### Independent check of the two reference points against NASA GSFC data (2026-11-15)
+
+The NASA table itself could still not be opened (NASA NTRS returns HTTP 403 to the development
+computer). The numbers were instead checked against a second NASA source:
+[NASA GSFC PGDA, "High-Resolution LOLA Topography for Lunar South Pole Sites"](https://pgda.gsfc.nasa.gov/products/78)
+(Barker et al. 2021, doi:10.1016/j.pss.2020.105119), which names Site06 "Nobile rim 1" and Site23
+"Malapert massif" and states that its maps are "south polar stereographic X/Y coords in meters,
+MOON_ME reference frame of ephemeris DE421".
+
+Read from the GeoTIFF headers of the two 5 m/pixel surface maps (header bytes only; no elevation
+data was used):
+
+| Site | Map size | Corner X, Y (m) | Centre X, Y (m) | Centre converted to latitude, east longitude | Table value supplied |
+|---|---|---|---|---|---|
+| Site06 | 4000 × 4000 pixels (20 km) | 74000, 120000 to 94000, 100000 | 84000, 110000 | −85.43810°, +37.36667° | −85.4381°, +37.36667° |
+| Site23 | 4200 × 4200 pixels (21 km) | −11000, 132000 to 10000, 111000 | −500, 121500 | −85.99478°, −0.23578° | −85.9948°, −0.23578° |
+
+Conversion used: sphere of radius 1737.4 km, polar stereographic with true scale at the pole,
+longitude = atan2(X, Y), east positive.
+
+What this establishes:
+
+- The two supplied coordinates are, to the printed precision, the **centres of the NASA PGDA
+  elevation-map tiles** for those two sites. The transcription is therefore corroborated by a
+  primary NASA data product, although the table has not been read directly.
+- The coordinates are in the **Moon ME frame (DE421)**, east-positive, ±180° longitude, provided
+  the maps follow the usual lunar south-polar convention (X towards 90° E). That convention is
+  what reproduces the table's positive sign for Nobile Rim 1; it is not stated in the product's
+  own README and remains to be confirmed.
+- A map-tile centre is an arbitrary point inside a 20 km square. It is **not a landing point**
+  and not necessarily on the feature's summit or rim.
+
+What it does not establish: the size of the difference between Moon ME (DE421) and the
+`MEAN_ME` frame Horizons reports with DE441; the real surface height at these points; anything
+about terrain. Height matters here: an observer on high ground sees a lower horizon, and the app
+assumes 0 km and does not calculate that effect.
+
 The NSSDCA coordinates are in a DE421-based mean-Earth frame; Horizons reports `MEAN_ME` with
 DE441. Whether the difference matters at our precision is a question for Yi.
 
