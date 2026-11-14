@@ -1,17 +1,21 @@
 # Progress
 
-Last updated: 14 Nov 2026, 18:35 SGT
+Last updated: 15 Nov 2026, 04:10 SGT
 
 ## Current state
 
 Phase 2 is complete locally and on GitHub. The app compares two lunar sites over the same UTC
 range: Sun and Earth elevation charts (Site A vs Site B), sampled geometric visibility with
 estimated edges, a comparison summary, per-series source labels, and limitations. A production
-site exists at <https://orbitxi-lunar-landing-site-navigato.vercel.app>. There are **no lunar south-pole candidate sites** yet.
+site exists at <https://orbitxi-lunar-landing-site-navigato.vercel.app>. Production runs commit `d4d8e68` (15 Nov, 04:01 SGT).
 
-Day 1 deliverables from four teammates have been collected and reviewed (see "Team inputs" below).
-None of them required a change to the application. The application is unchanged since commit
-`d490f6a`.
+There are **no lunar south-pole sites in the app** yet. Two NASA 2023 regional reference points
+(Nobile Rim 1, Malapert Massif) are prepared on a local branch and wait for review; see
+`docs/south-pole-reference-plan.md`. They are region-polygon centres, not landing sites.
+
+On 15 Nov three interface changes went live: the chart axis is fitted to the data (with a ±5° view
+around the horizon), Site A is solid and Site B dashed with text labels, and the form explains the
+request limits before anything is sent. The page footer now shows the deployed commit.
 
 ## Implemented and verified
 
@@ -27,7 +31,11 @@ None of them required a change to the application. The application is unchanged 
 | Cache, request coalescing, concurrency limit | Unit tests with a fake clock and a stubbed network |
 | API error handling (timeout, unreachable, 503, non-JSON, no table, wrong site, bad input) | Unit tests on the client and on both route handlers |
 | Site presets with cited coordinates, grouped as Historical Landing Sites — Validation Examples (six Apollo sites, NSSDCA) and Technical Verification (Tycho); each labelled NOT a lunar south-pole landing candidate | Coordinates copied from the NASA page read on 14 Nov; 9 unit tests on grouping, labels, citations, and the switch-over to South Pole Candidates |
-| Tests, lint, typecheck, production build | 108 tests pass; ESLint clean; `tsc --noEmit` clean; `next build` succeeds |
+| Chart axis fitted to the data; ±5° near-horizon view | 8 unit tests; on production the two near-polar test locations give a Sun axis of −4° to 8° instead of a flattened line |
+| Site A solid, Site B dashed, named in legend, pickers and table | Checked in the page on production (line dash pattern and text) |
+| Request size shown; requests over 2,000 samples per series or 62 days refused in the form | 5 unit tests, one comparing the form's decision with the server's for 350 day/interval combinations; on production 62 days at 30 minutes shows the reason, disables the button and makes no call |
+| Whole-month queries near the pole | Sun and Earth at −85.44° and −85.99°, 30 days hourly: 721 rows each; production output equal to a direct Horizons request |
+| Tests, lint, typecheck, production build | 121 tests pass; ESLint clean; `tsc --noEmit` clean; `next build` succeeds (15 Nov, `main`) |
 
 ## Production status
 
@@ -41,6 +49,10 @@ None of them required a change to the application. The application is unchanged 
   account that owns the Vercel project, because Vercel had been connected to a different
   account's repository and blocked deployments from the other author.
 - Each automatic deployment is checked after the push and noted in the log below.
+- 15 Nov, 04:02–04:04 SGT, build `d4d8e68`: 13 developer checks passed on production (page and
+  build id, live comparison, line styles, request-limit warning with no call made, server limits,
+  archive, custom near-polar locations, partial failure, equality with Horizons, console, 375 px
+  width). This is a developer smoke run, not the team's QA: Sean's 28 cases are NOT RUN.
 
 ## Team inputs (reviewed 14 Nov, 18:20 SGT)
 
@@ -65,19 +77,35 @@ Open points raised by the review:
 - Two different addresses for QuickMap appear in teammates' files and in our documents; to be
   checked against the challenge Resources tab before final credits.
 
+## Team inputs on 15 Nov
+
+Asher's acceptance report of 15 Nov records new files from Yi (R3 review, scoped sign-off, data
+archive), Tan (R1 v10, R2 v2) and Sean (submission checklist, 28-case test matrix). Those files
+are not on the development computer. So far:
+
+- Yi's 74-row comparison and window checks have **not been reproduced** by the developer.
+- Tan's three quick wins were implemented from their description, not from his specification.
+- Sean's 28 cases are **NOT RUN**.
+- Yi's sign-off, as reported, covers the tested geometric and API cases only. It does not cover the
+  south-pole reference points, the frame of their source, near-polar window reliability, or the video.
+
 ## Not verified
 
-- Behaviour on phones (layout is responsive by design, not tested on a device).
-- Whole-month queries at polar latitudes (only 6-hour and 3-day polar tests so far).
+- Behaviour on a real phone (375 px emulation only; the horizon label overlaps the lines slightly at that width).
+- The two NASA table rows for the reference points: the NASA document could not be opened from the
+  development computer (HTTP 403), so the numbers are as supplied by Asher.
+- Longitude convention, frame and height of those points (T-27).
+- Rise and set times near the pole: 107–129 of 721 hourly samples per series lie within ±1° of the
+  horizon, so the windows are sensitive to threshold, height and terrain.
 - Scientific correctness of thresholds, frames, and site heights — awaiting Yi (see `SCIENTIFIC_HANDOFF.md`). Unit tests passing is not scientific validation.
 - Horizons behaviour under sustained load; its rate limits are undocumented.
 
 ## Not implemented
 
-- South-pole candidate presets (T-05).
+- South-pole presets on production (T-10; prepared on a local branch).
 - Science-approved thresholds (T-06).
 - Shaded windows on charts, sky-position view, animation.
-- Tan's UI specification.
+- The rest of Tan's UI specification (three items done, T-25).
 - Terrain-aware visibility — out of scope for the MVP.
 
 ## Material available for the demo video
@@ -89,13 +117,12 @@ Open points raised by the review:
 | Screenshots | `docs/screenshots/` — development screenshots from the local build, for reference only |
 | Approved wording | "Geometric centre-of-disc visibility only. Terrain obstruction, solar panel output and communication link quality are NOT modeled." |
 
-Not ready to record: there is no south-pole site yet.
+Not ready to record: no south-pole point is on production yet (T-27, T-10).
 
 ## Blockers
 
-- Two south-pole sites with cited coordinates (Baoyi, T-05).
-- Thresholds and frame confirmation (Yi, T-06, T-20). The handoff evidence has not yet been sent to
-  Yi or Baoyi (T-23).
+- Review of the two reference points before they can go to production (Yi, T-27).
+- Teammates' new files (Yi, Tan, Sean) are not on the development computer.
 - Decisions for the video: demo sites and dates, recording plan, voice, editor (T-23).
 
 ## Dependency audit (14 Nov)
@@ -106,6 +133,18 @@ ESLint tooling (`typescript-eslint` packages). `npm audit --omit=dev` reports 0.
 deployed app is affected, so no update was made.
 
 ## Log
+
+### 15 Nov, 03:55–04:10 SGT
+
+- Archived Asher's supplement on south-pole reference coordinates outside this repository.
+  Could not open the NASA document to re-read the rows (HTTP 403 from NASA NTRS, three attempts).
+- Horizons, 03:58 SGT: Sun and Earth for both points, 14 Nov–14 Dec hourly, 721 rows each. Sun stays
+  between −3.1° and +6.1°, Earth between −3.0° and +10.3°.
+- Interface changes (T-25) committed as `d4d8e68`, pushed 04:01:18; GitHub showed the Vercel status
+  as success at 04:01:35; production footer showed `d4d8e68` at 04:02:50.
+- Developer smoke run on production, 13 checks pass (T-28).
+- Reference points prepared on local branch `south-pole-reference-points` (`dd7bed7`), not pushed.
+- No email was read or sent.
 
 ### 14 Nov, 17:58–18:35 SGT
 

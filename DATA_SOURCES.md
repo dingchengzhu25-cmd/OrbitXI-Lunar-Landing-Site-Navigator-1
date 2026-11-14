@@ -47,6 +47,26 @@ Unless a row says otherwise, tests used the Horizons manual's own example site (
 | Sun and Earth, Apollo 11 and Apollo 17 sites, 30 days hourly | 721 rows each |
 | Sun and Earth, Apollo 17 site, 20–22 Nov, 2 h step, through the app and directly | 25 rows each; app output identical to Horizons, 0 mismatches |
 
+### VERIFIED by live requests on 2026-11-15 (near-polar, whole month)
+
+Coordinates of the two regional reference points described under "Site coordinates"; height 0 km
+assumed; 2026-11-14 00:00 to 2026-12-14 00:00 UT, 60-minute step; retrieved 2026-11-14 19:58 UTC.
+
+| Point | Body | Rows | Elevation range | Samples above 0° | Samples within ±1° of 0° |
+|---|---|---|---|---|---|
+| −85.4381°, 37.36667° E | Sun | 721 | −3.111372° to 6.101327° | 439 | 107 |
+| −85.4381°, 37.36667° E | Earth | 721 | −3.018130° to 9.708616° | 468 | 125 |
+| −85.9948°, 359.76422° E | Sun | 721 | −2.570259° to 5.526833° | 443 | 129 |
+| −85.9948°, 359.76422° E | Earth | 721 | −2.851145° to 10.255083° | 490 | 118 |
+
+Horizons reported the same frame, sphere and refraction settings as below. The same four series
+requested through the production app (build `d4d8e68`) were identical: 721 rows each, same first
+and last rows, same sum of elevations.
+
+What this does and does not show: the pipeline works for a whole month at these latitudes. It does
+not show that the coordinates are right, that their frame matches Horizons, or when the Sun or
+Earth is actually visible there.
+
 Facts read from the response headers:
 
 - API signature: `NASA/JPL Horizons API`, version 1.2.
@@ -74,8 +94,8 @@ Earth-orientation predictions.
 
 ### RESEARCHED BUT UNTESTED
 
-- Whole-month ranges at polar latitudes (only 6-hour and 3-day polar tests so far).
 - Ranges longer than 30 days and steps shorter than 30 minutes.
+- Whole-month ranges closer to the pole than latitude −86°.
 - Behaviour under many requests in quick succession.
 
 ### UNKNOWN
@@ -89,7 +109,8 @@ Earth-orientation predictions.
 |---|---|---|
 | Apollo 11, 12, 14, 15, 16, 17 Lunar Modules | NASA NSSDCA, [Apollo Landing Site Coordinates](https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html), read 2026-11-14 | Page states: planetocentric Mean Earth/Polar Axis system, DE421, from LRO images (Wagner et al., Icarus 283, 2017). No heights given; the app uses 0 km. Historical sites, not south-pole candidates. |
 | Tycho crater example | JPL Horizons manual surface-site example | Pipeline verification only. |
-| South-pole candidates | **None yet** | Waiting on Baoyi. |
+| South-pole regional reference points: Nobile Rim 1 (−85.4381°, +37.36667°), Malapert Massif (−85.9948°, −0.23578°) | NASA Artemis Campaign Development, *Lunar Surface Data Book*, ACD-50044 Rev A (2023), Appendix A2, Table A2-2, rows R06 / Site06 and R23 / Site23, [NASA NTRS](https://ntrs.nasa.gov/api/citations/20230007818/downloads/ACD-50044%20Lunar%20Surface%20Data%20Book%20Rev%20A.pdf) | **RESEARCHED, NOT IN THE APP.** Supplied by Asher on 15 Nov as a supplement to Baoyi's inventory. Centres of region polygons in a 2023 reference table; not exact landing points and not NASA-approved landing sites. The table gives no height. The developer could not open the PDF (HTTP 403) and has not re-read the rows. Longitude convention and frame not confirmed. |
+| South-pole candidates | **None** | Both names appear in NASA's October 2024 list of nine Artemis III candidate regions (per Asher's research; that release gives no coordinates). The 2023 points are not claimed to be the centres of the 2024 regions. |
 
 The NSSDCA coordinates are in a DE421-based mean-Earth frame; Horizons reports `MEAN_ME` with
 DE441. Whether the difference matters at our precision is a question for Yi.
@@ -125,6 +146,12 @@ How results are derived and what they can claim:
 The Sun's disc is about 0.5° across and Earth's about 1.9° as seen from the Moon (general
 astronomy values, not taken from our data), so "centre above 0°" differs from "any part of the
 disc above 0°" for some minutes to hours near the poles. Which rule to use is Yi's decision.
+
+## Request limits
+
+Enforced by the server (`src/lib/horizons/request.ts`): step 10 to 1440 minutes, at most 62 days,
+at most 2,000 rows per series. Since 15 Nov the form applies the same limits before sending and
+states the reason (`src/lib/requestPlan.ts`); a unit test checks that the two agree.
 
 ## Caching and request handling
 
