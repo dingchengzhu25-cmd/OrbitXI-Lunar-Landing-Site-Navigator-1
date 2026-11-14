@@ -7,6 +7,8 @@ A web app for comparing candidate lunar landing sites and dates by showing where
 Earth sit relative to the local horizon, using ephemeris data from the
 [NASA/JPL Horizons System](https://ssd.jpl.nasa.gov/horizons/).
 
+**Live app:** <https://orbitxi-lunar-landing-site-navigato.vercel.app>
+
 ## Current status
 
 See [PROGRESS.md](PROGRESS.md) for the verified feature list. In short: two sites can be compared
@@ -27,7 +29,7 @@ Requires Node.js 20.19 or newer. No API keys or environment variables are needed
 ```bash
 npm install
 npm run dev        # http://localhost:3000
-npm test           # 93 tests; the network is replaced by real archived Horizons responses
+npm test           # 102 tests; the network is replaced by real archived Horizons responses
 npm run build      # production build
 ```
 

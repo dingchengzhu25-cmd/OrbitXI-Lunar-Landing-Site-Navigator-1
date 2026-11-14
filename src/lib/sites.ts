@@ -19,7 +19,7 @@ const NSSDCA = {
   source:
     "NASA NSSDCA, “Apollo Landing Site Coordinates” (Mean Earth/Polar Axis frame, DE421; from LRO images, Wagner et al. 2017)",
   sourceUrl: "https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html",
-  note: "Historical landing site, not a south-pole candidate. Height set to 0 km: the source lists no height.",
+  note: "NOT a lunar south-pole landing candidate. Assumed height: 0 km (the source lists no height).",
 } as const;
 
 const apollo = (n: number, latDeg: number, lonEastDeg: number): SitePreset => ({
@@ -53,15 +53,45 @@ export const SITE_PRESETS: SitePreset[] = [
     kind: "verification",
     source: "JPL Horizons manual, surface-site example “g: 348.8, -43.3, 0 @ 301”",
     sourceUrl: "https://ssd.jpl.nasa.gov/horizons/manual.html",
-    note: "Technical verification site only. Not a landing site or candidate.",
+    note: "NOT a lunar south-pole landing candidate, and not a landing site. Height 0 km is part of the Horizons example.",
   },
 ];
 
 export const KIND_LABEL: Record<SiteKind, string> = {
-  historical: "historical landing site — not a south-pole candidate",
-  verification: "technical verification site — not a landing candidate",
-  "south-pole-candidate": "south-pole candidate",
+  historical: "historical landing site — NOT a lunar south-pole landing candidate",
+  verification: "technical verification example — NOT a lunar south-pole landing candidate",
+  "south-pole-candidate": "lunar south-pole candidate",
 };
+
+/** Selector groups, in display order. South-pole candidates lead once any exist. */
+export const SITE_GROUPS: { kind: SiteKind; title: string }[] = [
+  { kind: "south-pole-candidate", title: "South Pole Candidates" },
+  { kind: "historical", title: "Historical Landing Sites — Validation Examples" },
+  { kind: "verification", title: "Technical Verification" },
+];
+
+export function presetsByGroup(presets: SitePreset[] = SITE_PRESETS): { title: string; kind: SiteKind; presets: SitePreset[] }[] {
+  return SITE_GROUPS.map((g) => ({ ...g, presets: presets.filter((p) => p.kind === g.kind) })).filter(
+    (g) => g.presets.length > 0,
+  );
+}
+
+export function hasSouthPoleCandidates(presets: SitePreset[] = SITE_PRESETS): boolean {
+  return presets.some((p) => p.kind === "south-pole-candidate");
+}
+
+/**
+ * Default Site A / Site B. South-pole candidates take over as soon as two are present;
+ * until then the demo uses two documented historical sites.
+ */
+export function defaultSiteIds(presets: SitePreset[] = SITE_PRESETS): [string, string] {
+  const candidates = presets.filter((p) => p.kind === "south-pole-candidate");
+  if (candidates.length >= 2) return [candidates[0].id, candidates[1].id];
+  const historical = presets.filter((p) => p.kind === "historical");
+  if (candidates.length === 1 && historical.length >= 1) return [candidates[0].id, historical[0].id];
+  if (historical.length >= 2) return [historical[0].id, historical[historical.length - 1].id];
+  return [presets[0].id, presets[presets.length - 1].id];
+}
 
 export function findPreset(id: string): SitePreset | undefined {
   return SITE_PRESETS.find((s) => s.id === id);

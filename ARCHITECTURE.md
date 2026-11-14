@@ -31,7 +31,7 @@ error messages, and provenance.
 | Styling | Tailwind CSS 4 |
 | Charts | Recharts 3 |
 | Tests | Vitest |
-| Hosting | Vercel (planned), deployed from GitHub |
+| Hosting | Vercel; pushes to `main` publish to production |
 
 ## Source layout
 

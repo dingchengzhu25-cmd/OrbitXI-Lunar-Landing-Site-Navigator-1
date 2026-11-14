@@ -1,13 +1,13 @@
 # Progress
 
-Last updated: 14 Nov 2026, 15:15 SGT
+Last updated: 14 Nov 2026, 15:25 SGT
 
 ## Current state
 
 Phase 2 is complete locally and on GitHub. The app compares two lunar sites over the same UTC
 range: Sun and Earth elevation charts (Site A vs Site B), sampled geometric visibility with
-estimated edges, a comparison summary, per-series source labels, and limitations. It is **not
-deployed**. There are **no lunar south-pole candidate sites** yet.
+estimated edges, a comparison summary, per-series source labels, and limitations. A production
+site exists at <https://orbitxi-lunar-landing-site-navigato.vercel.app>. There are **no lunar south-pole candidate sites** yet.
 
 ## Implemented and verified
 
@@ -22,12 +22,20 @@ deployed**. There are **no lunar south-pole candidate sites** yet.
 | Each series checked against requested body and site, on server and in browser | Unit tests (wrong body, wrong site, tampered request) |
 | Cache, request coalescing, concurrency limit | Unit tests with a fake clock and a stubbed network |
 | API error handling (timeout, unreachable, 503, non-JSON, no table, wrong site, bad input) | Unit tests on the client and on both route handlers |
-| Site presets with cited coordinates (six Apollo sites, NSSDCA; Tycho test fixture) | Coordinates copied from the NASA page read on 14 Nov |
-| Tests, lint, typecheck, production build | 93 tests pass; ESLint clean; `tsc --noEmit` clean; `next build` succeeds |
+| Site presets with cited coordinates, grouped as Historical Landing Sites — Validation Examples (six Apollo sites, NSSDCA) and Technical Verification (Tycho); each labelled NOT a lunar south-pole landing candidate | Coordinates copied from the NASA page read on 14 Nov; 9 unit tests on grouping, labels, citations, and the switch-over to South Pole Candidates |
+| Tests, lint, typecheck, production build | 102 tests pass; ESLint clean; `tsc --noEmit` clean; `next build` succeeds |
+
+## Production status
+
+- 15:14 SGT: the production URL answered and returned live Horizons data equal to a direct
+  Horizons request (25 Sun and 25 Earth rows, 0 mismatches), but it was serving a build from
+  before Phase 2. Pushes had not triggered deployments because the Vercel project was not yet
+  connected to the GitHub repository.
+- About 15:20 SGT: Asher connected the repository in Vercel. Pushes to `main` now publish
+  directly to production.
+- Whether production serves the current commit is recorded in the log below once checked.
 
 ## Not verified
-
-- Anything on Vercel: no deployment exists.
 - Behaviour on phones (layout is responsive by design, not tested on a device).
 - Whole-month queries at polar latitudes (only 6-hour and 3-day polar tests so far).
 - Scientific correctness of thresholds, frames, and site heights — awaiting Yi.
@@ -45,16 +53,15 @@ deployed**. There are **no lunar south-pole candidate sites** yet.
 
 | Item | Status |
 |---|---|
-| Public app URL | Not yet available |
+| Public app URL | <https://orbitxi-lunar-landing-site-navigato.vercel.app> |
 | Repository | <https://github.com/Zdcgaryland69/OrbitXI-Lunar-Landing-Site-Navigator> |
 | Screenshots | `docs/screenshots/` — development screenshots from the local build, for reference only |
 | Approved wording | "Geometric centre-of-disc visibility only. Terrain obstruction, solar panel output and communication link quality are NOT modeled." |
 
-Not ready to record: there is no public URL and no south-pole site.
+Not ready to record: there is no south-pole site yet.
 
 ## Blockers
 
-- Vercel sign-in and import (Asher, T-04).
 - Two south-pole sites with cited coordinates (Baoyi, T-05).
 - Thresholds and frame confirmation (Yi, T-06).
 
@@ -66,6 +73,13 @@ ESLint tooling (`typescript-eslint` packages). `npm audit --omit=dev` reports 0.
 deployed app is affected, so no update was made.
 
 ## Log
+
+### 14 Nov, 15:15–15:25 SGT
+
+- Corrected an earlier wrong statement that no deployment existed; it had been inferred from
+  GitHub deployment counts instead of testing the URL.
+- Grouped the site presets and strengthened their labels. South Pole Candidates will become the
+  first group and the default selection automatically once cited coordinates are added.
 
 ### 14 Nov, 15:00–15:15 SGT — Phase 2
 

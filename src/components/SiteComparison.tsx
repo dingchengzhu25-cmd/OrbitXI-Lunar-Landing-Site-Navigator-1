@@ -12,7 +12,7 @@ import {
   type SiteLoad,
 } from "@/lib/comparison";
 import type { ApiErrorBody, DataSourceKind, EphemerisResponse } from "@/lib/horizons/types";
-import { findPreset, KIND_LABEL, SITE_PRESETS } from "@/lib/sites";
+import { defaultSiteIds, findPreset, hasSouthPoleCandidates, KIND_LABEL, presetsByGroup } from "@/lib/sites";
 import { compareSites, PROVISIONAL_CONFIG, type Visibility, type WindowEdge } from "@/lib/visibility";
 
 const DEFAULT_START = "2026-11-14";
@@ -102,12 +102,18 @@ function SitePicker({ title, color, value, onChange }: { title: string; color: s
           value={value.presetId}
           onChange={(e) => onChange(e.target.value === CUSTOM ? { ...value, presetId: CUSTOM } : fromPreset(e.target.value))}
         >
-          {SITE_PRESETS.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.name}
-            </option>
+          {presetsByGroup().map((g) => (
+            <optgroup key={g.kind} label={g.title}>
+              {g.presets.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </optgroup>
           ))}
-          <option value={CUSTOM}>Custom test location (enter coordinates)</option>
+          <optgroup label="Custom — Unverified / Experimental">
+            <option value={CUSTOM}>Custom test location (enter coordinates)</option>
+          </optgroup>
         </select>
       </label>
       <div className="mt-3 grid grid-cols-3 gap-3">
@@ -127,7 +133,11 @@ function SitePicker({ title, color, value, onChange }: { title: string; color: s
       <p className="mt-2 text-xs leading-relaxed text-slate-400">
         {preset ? (
           <>
-            <span className="rounded bg-amber-500/15 px-1.5 py-0.5 text-amber-300">{KIND_LABEL[preset.kind]}</span>{" "}
+            <span
+              className={`rounded px-1.5 py-0.5 ${preset.kind === "south-pole-candidate" ? "bg-emerald-500/15 text-emerald-300" : "bg-amber-500/15 font-semibold text-amber-300"}`}
+            >
+              {KIND_LABEL[preset.kind]}
+            </span>{" "}
             Coordinate source:{" "}
             <a className="text-sky-400 underline" href={preset.sourceUrl} target="_blank" rel="noreferrer">
               {preset.source}
@@ -219,8 +229,8 @@ function WindowList({ title, v }: { title: string; v: Visibility }) {
 /* ---------- main component ---------- */
 
 export function SiteComparison() {
-  const [siteA, setSiteA] = useState<SiteInput>(() => fromPreset("apollo11"));
-  const [siteB, setSiteB] = useState<SiteInput>(() => fromPreset("apollo17"));
+  const [siteA, setSiteA] = useState<SiteInput>(() => fromPreset(defaultSiteIds()[0]));
+  const [siteB, setSiteB] = useState<SiteInput>(() => fromPreset(defaultSiteIds()[1]));
   const [start, setStart] = useState(DEFAULT_START);
   const [days, setDays] = useState("30");
   const [stepMin, setStepMin] = useState("60");
@@ -297,11 +307,13 @@ export function SiteComparison() {
             <SitePicker title="Site A" color={SITE_A_COLOR} value={siteA} onChange={setSiteA} />
             <SitePicker title="Site B" color={SITE_B_COLOR} value={siteB} onChange={setSiteB} />
           </div>
-          <p className="mt-2 rounded border border-slate-700 bg-slate-900/40 p-2 text-xs text-slate-300">
-            <strong>Lunar south-pole candidate sites are pending.</strong> They will be added once coordinates with a
-            citable NASA source are confirmed. Until then, compare the documented historical sites or enter a test
-            location.
-          </p>
+          {!hasSouthPoleCandidates() && (
+            <p className="mt-2 rounded border border-slate-700 bg-slate-900/40 p-2 text-xs text-slate-300">
+              <strong>Lunar south-pole candidate sites are pending.</strong> They will be added once coordinates with a
+              citable NASA source are confirmed. The locations offered now are validation examples and are NOT lunar
+              south-pole landing candidates.
+            </p>
+          )}
         </section>
 
         <section aria-labelledby="h-dates" className={card}>
