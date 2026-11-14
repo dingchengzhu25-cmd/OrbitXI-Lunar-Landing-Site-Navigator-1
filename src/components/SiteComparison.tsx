@@ -317,10 +317,12 @@ export function SiteComparison() {
           </div>
           {hasRegionalReferences() && (
             <p role="note" className="mt-2 rounded border border-amber-500/50 bg-amber-950/30 p-2 text-xs text-amber-100">
-              <strong>South-pole region reference points are NOT NASA-approved landing points.</strong> They are the
-              centres of named region polygons in a 2023 NASA reference table. Results for them are geometric Sun and
-              Earth disc-centre visibility over a smooth sphere only. Site height is assumed to be 0 km. No terrain,
-              power output or radio-link performance is modelled.
+              <strong>NASA 2023 regional reference points are NOT NASA-approved landing points.</strong> They are
+              centre points of region polygons in a 2023 NASA reference table, and not necessarily the centres of the
+              2024 Artemis III candidate regions. Results for them are geometric Sun and Earth disc-centre visibility
+              over a smooth sphere only. Site height is assumed to be 0 km. Near the pole the Sun and Earth stay
+              within a few degrees of the horizon, where real terrain decides what is visible. No terrain, power
+              output or radio-link performance is modelled.
             </p>
           )}
           {!hasSouthPoleCandidates() && !hasRegionalReferences() && (
@@ -636,7 +638,7 @@ export function SiteComparison() {
               </li>
               {hasRegionalReferences() && (
                 <li>
-                  South-pole region reference coordinates:{" "}
+                  NASA 2023 regional reference coordinates:{" "}
                   <a
                     className="text-sky-400 underline"
                     href="https://ntrs.nasa.gov/api/citations/20230007818/downloads/ACD-50044%20Lunar%20Surface%20Data%20Book%20Rev%20A.pdf"

@@ -1,10 +1,11 @@
 # South-pole regional reference points — integration plan
 
-Status on 15 Nov 2026, 04:10 SGT: **prepared, not on production.**
+Status on 15 Nov 2026, 05:15 SGT: **on a review branch with a draft pull request; not merged, not on production.**
+Asher decided on 15 Nov to show these points as the primary demonstration, with Apollo 11 / 17 as the verified fallback, once the gates below are met.
 
 ## What would be added
 
-Two presets in their own group, "South Pole Region Reference Points — NASA 2023 Reference Polygons":
+Two presets in their own group, "NASA 2023 Regional Reference Points — Lunar South Pole":
 
 | Preset | Latitude | Longitude as printed | Height | Cited as |
 |---|---|---|---|---|
@@ -16,8 +17,7 @@ polygons in a 2023 reference table. They are not exact landing points and not NA
 
 ## Where the work is
 
-Local branch `south-pole-reference-points`, one commit (`dd7bed7`) on top of `main` at `d4d8e68`.
-It has not been pushed. It changes `src/lib/sites.ts`, `src/lib/sites.test.ts` and
+Branch `south-pole-reference-points`, rebased on `main` at `da01b5a` and pushed for review on 15 Nov. It changes `src/lib/sites.ts`, `src/lib/sites.test.ts` and
 `src/components/SiteComparison.tsx` only.
 
 - New site kind `south-pole-regional-reference`; the existing "South Pole Candidates" kind stays empty.
@@ -34,27 +34,24 @@ It has not been pushed. It changes `src/lib/sites.ts`, `src/lib/sites.test.ts` a
 
 | # | Gate | Owner | State |
 |---|---|---|---|
-| 1 | The two rows are read from the NASA PDF itself by someone on the team | Asher or Yi | open for the PDF (HTTP 403 from NASA NTRS). **Corroborated 15 Nov** from NASA GSFC PGDA map headers: both coordinates equal the map-tile centres to the printed precision (`DATA_SOURCES.md`) |
+| 1 | The two rows are read from the NASA PDF itself by someone on the team | Asher | **done 15 Nov** — Asher confirmed both rows from the PDF's searchable text (document page 59 of 70). Corroborated from NASA GSFC PGDA map headers. A visual look at the table page is still desirable (the page image could not be retrieved) |
 | 2 | Longitude convention of the table (east-positive, ±180°) confirmed from the document | Yi | supported by the PGDA maps under the usual polar-stereographic convention; formal confirmation open |
 | 3 | Frame of the table compared with Horizons `MEAN_ME` | Yi | source frame identified as Moon ME, DE421 (PGDA); size of the difference from Horizons `MEAN_ME` (DE441) not quantified — open |
 | 4 | Height: accept the 0 km assumption with its wording, or supply a value with a source | Yi | open |
-| 5 | Wording of the badge and notice approved | Yi, Asher | open |
+| 5 | Wording of the badge and notice approved | Yi, Asher | open — proposed wording is on the branch |
+| 8 | Production QA after merge: Sean's case QA26 and a smoke run on the new build | developer, Sean | open |
 | 6 | Horizons returns a full month for both points | developer | done 15 Nov — 721 hourly rows per series; production output equal to direct Horizons |
 | 7 | Tests, lint, type check, build | developer | done on the branch |
 
-Finding of 15 Nov that affects the wording (gate 5): the points are centres of NASA PGDA
-elevation-map tiles (20–21 km squares). The branch currently says "centre of a named region
-polygon". Before merging, the label should be settled against Appendix A2.1 of the NASA document;
-"centre of the NASA elevation-map tile for the region" is what the data shows.
-
-`main` has moved on since the branch was cut, so the branch must be rebased or merged normally
-(the fast-forward command below will be refused).
+Wording note: the NASA document describes the points as centre points of the original region
+polygons, derived from PGDA DEM files; they coincide with the centres of the PGDA map tiles. The
+branch uses the document's description.
 
 ## How to merge
 
 ```
 git checkout main
-git merge --ff-only south-pole-reference-points
+git merge --no-ff south-pole-reference-points   # or merge the pull request
 npm test && npm run lint && npx tsc --noEmit && npm run build
 git push origin main
 ```

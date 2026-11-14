@@ -35,8 +35,10 @@ const apollo = (n: number, latDeg: number, lonEastDeg: number): SitePreset => ({
 const ACD_50044 = {
   sourceUrl: "https://ntrs.nasa.gov/api/citations/20230007818/downloads/ACD-50044%20Lunar%20Surface%20Data%20Book%20Rev%20A.pdf",
   note:
-    "Centre of a named region polygon in a 2023 NASA reference table. NOT an exact landing point and NOT a NASA-approved landing site. " +
-    "Assumed height: 0 km (the table gives no height). The table's frame and longitude convention have not yet been confirmed against the frame Horizons uses.",
+    "Centre point of an original region polygon in a 2023 NASA reference table, derived from NASA PGDA elevation maps. " +
+    "NOT an exact landing point, NOT a NASA-approved landing site, and not necessarily the centre of a 2024 Artemis III candidate region. " +
+    "Assumed height: 0 km (the table gives no height). Geometric horizon only: no terrain. " +
+    "Source frame Moon ME (DE421); its difference from the frame Horizons uses has not been quantified.",
 } as const;
 
 /** A row of Table A2-2. Coordinates are entered exactly as printed. */
@@ -91,13 +93,13 @@ export const KIND_LABEL: Record<SiteKind, string> = {
   verification: "technical verification example — NOT a lunar south-pole landing candidate",
   "south-pole-candidate": "lunar south-pole candidate",
   "south-pole-regional-reference":
-    "NASA 2023 regional reference point — NOT a NASA-approved landing site; geometric model only, no terrain",
+    "NASA 2023 regional reference point — NOT a NASA-approved landing site; height assumed 0 km; geometric horizon only, no terrain",
 };
 
 /** Selector groups, in display order. South-pole candidates lead once any exist. */
 export const SITE_GROUPS: { kind: SiteKind; title: string }[] = [
   { kind: "south-pole-candidate", title: "South Pole Candidates" },
-  { kind: "south-pole-regional-reference", title: "South Pole Region Reference Points — NASA 2023 Reference Polygons" },
+  { kind: "south-pole-regional-reference", title: "NASA 2023 Regional Reference Points — Lunar South Pole" },
   { kind: "historical", title: "Historical Landing Sites — Validation Examples" },
   { kind: "verification", title: "Technical Verification" },
 ];

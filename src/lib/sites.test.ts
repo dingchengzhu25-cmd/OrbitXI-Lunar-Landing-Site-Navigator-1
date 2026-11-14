@@ -74,7 +74,8 @@ describe("south-pole regional reference points", () => {
       expect(p.kind).toBe("south-pole-regional-reference");
       expect(p.name).toMatch(/NASA 2023 regional reference point$/);
       expect(p.name).not.toMatch(/candidate|landing|Artemis/i);
-      expect(p.note).toMatch(/NOT an exact landing point and NOT a NASA-approved landing site/);
+      expect(p.note).toMatch(/NOT an exact landing point, NOT a NASA-approved landing site/);
+      expect(p.note).toMatch(/not necessarily the centre of a 2024 Artemis III candidate region/);
       expect(KIND_LABEL[p.kind]).toMatch(/NOT a NASA-approved landing site/);
     }
   });
@@ -82,7 +83,9 @@ describe("south-pole regional reference points", () => {
   it("states the assumed height, the unconfirmed frame and the absence of terrain", () => {
     for (const p of REGIONAL_REFERENCE_PRESETS) {
       expect(p.note).toMatch(/Assumed height: 0 km \(the table gives no height\)/);
-      expect(p.note).toMatch(/not yet been confirmed/);
+      expect(p.note).toMatch(/has not been quantified/);
+      expect(p.note).toMatch(/Geometric horizon only: no terrain/);
+      expect(KIND_LABEL[p.kind]).toMatch(/height assumed 0 km/);
       expect(KIND_LABEL[p.kind]).toMatch(/no terrain/);
     }
   });
@@ -90,7 +93,7 @@ describe("south-pole regional reference points", () => {
   it("has its own selector group, placed first, and is never a default selection", () => {
     expect(hasRegionalReferences()).toBe(true);
     const groups = presetsByGroup();
-    expect(groups[0].title).toBe("South Pole Region Reference Points — NASA 2023 Reference Polygons");
+    expect(groups[0].title).toBe("NASA 2023 Regional Reference Points — Lunar South Pole");
     expect(groups[0].presets.map((p) => p.id)).toEqual(["nobile-rim-1-reference", "malapert-massif-reference"]);
     expect(defaultSiteIds()).toEqual(["apollo11", "apollo17"]);
     expect(defaultSiteIds(REGIONAL_REFERENCE_PRESETS.concat(SITE_PRESETS.filter((p) => p.kind === "verification")))).toEqual([

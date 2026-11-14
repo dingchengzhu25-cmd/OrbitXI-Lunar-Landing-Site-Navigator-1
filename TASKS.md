@@ -1,4 +1,6 @@
-# Tasks
+# Tasks done — two rows of NASA ACD-50044 Table A2-2 supplied and confirmed by Asher from the PDF text (15 Nov); regional reference points, not landing doing — on review branch `south-pole-reference-points` with a draft pull request; not merged; gates in doing — rows confirmed (Asher) and corroborated (PGDA). Open for Yi: longitude direction, frame difference, 0 km assumption, wording |
+|
+|
 
 Priority: P0 = required to submit, P1 = important, P2 = if time allows.
 Status: todo / doing / blocked / done. Times are SGT.
