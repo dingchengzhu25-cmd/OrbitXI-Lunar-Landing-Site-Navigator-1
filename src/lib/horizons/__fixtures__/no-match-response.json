@@ -1,0 +1,12 @@
+{
+ "meta": {
+  "note": "Real Horizons reply (HTTP 200) to COMMAND='nonsense_xyz', retrieved 2026-11-14 ~06:12 UTC. Used to test error detection."
+ },
+ "response": {
+  "signature": {
+   "version": "1.2",
+   "source": "NASA/JPL Horizons API"
+  },
+  "result": "*******************************************************************************\nJPL/DASTCOM            Small-body Index Search Results     2026-Nov-13 22:12:09\n\n Comet AND asteroid index search:\n\n   NAME = nonsense_xyz;\n\n Matching small-bodies: \n    No matches found.\n*******************************************************************************\n"
+ }
+}
