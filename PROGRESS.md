@@ -1,13 +1,13 @@
 # Progress
 
-Last updated: 15 Nov 2026, 04:10 SGT
+Last updated: 15 Nov 2026, 04:35 SGT
 
 ## Current state
 
 Phase 2 is complete locally and on GitHub. The app compares two lunar sites over the same UTC
 range: Sun and Earth elevation charts (Site A vs Site B), sampled geometric visibility with
 estimated edges, a comparison summary, per-series source labels, and limitations. A production
-site exists at <https://orbitxi-lunar-landing-site-navigato.vercel.app>. Production runs commit `d4d8e68` (15 Nov, 04:01 SGT).
+site exists at <https://orbitxi-lunar-landing-site-navigato.vercel.app>. Production runs the application code of commit `d4d8e68` (15 Nov, 04:01 SGT); later commits change documents only.
 
 There are **no lunar south-pole sites in the app** yet. Two NASA 2023 regional reference points
 (Nobile Rim 1, Malapert Massif) are prepared on a local branch and wait for review; see
@@ -77,17 +77,32 @@ Open points raised by the review:
 - Two different addresses for QuickMap appear in teammates' files and in our documents; to be
   checked against the challenge Resources tab before final credits.
 
-## Team inputs on 15 Nov
+## Team inputs on 15 Nov (files received and checked, 04:23–04:35 SGT)
 
-Asher's acceptance report of 15 Nov records new files from Yi (R3 review, scoped sign-off, data
-archive), Tan (R1 v10, R2 v2) and Sean (submission checklist, 28-case test matrix). Those files
-are not on the development computer. So far:
+Teammates' files are kept outside this repository.
 
-- Yi's 74-row comparison and window checks have **not been reproduced** by the developer.
-- Tan's three quick wins were implemented from their description, not from his specification.
-- Sean's 28 cases are **NOT RUN**.
-- Yi's sign-off, as reported, covers the tested geometric and API cases only. It does not cover the
-  south-pole reference points, the frame of their source, near-polar window reliability, or the video.
+| Area | Received | Checked here | Result |
+|---|---|---|---|
+| Science (Yi) | R3 review, data archive (23 JSON/CSV files), R4 wording | Her 74-row comparison recomputed from her raw files and re-run against production build `86e8f04` and Horizons; both Apollo sunrise brackets re-queried at 1-minute steps; window numbers recomputed | All confirmed: 74 of 74 rows identical; interpolated sunrises inside the 1-minute brackets. Her two scripts were not in the archive, so her synthetic-input tests were not re-run |
+| UX (Tan) | R1 v9, R1 v10, R2 v2 specification and wireframe | Specification read in full and compared with production | Auto-zoom, A solid / B dashed, A/B labels and the sample-limit check are built (the zoom rule differs in detail). Not built: colour by body, inline field validation, summary at the top, timeline. Partly: tooltip format, loading and error states, phone layout |
+| QA (Sean) | Submission checklist, 28-case matrix, README guide | All 28 cases attempted on production build `86e8f04` by the developer | 23 PASS, 1 FAIL, 3 BLOCKED, 1 NOT RUN. Sean has not yet confirmed them |
+| Video (Zhang) | Nothing new | — | — |
+
+Scope of the science result: it shows that the app returns what Horizons returns and that the
+visibility rule behaves as defined for two Apollo sites. Yi's own open items remain: the frame of
+the cited coordinates against Horizons `MEAN_ME` (not quantified), the largest safe sampling step
+near the pole, and anything about south-pole points. It is not an approval of any landing site.
+
+Yi accepts labelling these times as UTC (Horizons' UT column is UTC for modern dates). The UT/UTC
+open point is closed on the science side.
+
+QA findings to fix:
+
+- **QA20 (fail):** README credits do not list third-party software and licences or disclose AI use (T-30).
+- Changing the form after results are shown gives no "settings changed" notice; results stay
+  correctly labelled (T-31).
+- Coordinate errors are shown after Compare, not beside the field (T-31).
+- Blocked: three video cases (no final video). Not run: the official form.
 
 ## Not verified
 
@@ -122,7 +137,8 @@ Not ready to record: no south-pole point is on production yet (T-27, T-10).
 ## Blockers
 
 - Review of the two reference points before they can go to production (Yi, T-27).
-- Teammates' new files (Yi, Tan, Sean) are not on the development computer.
+- README credits and AI disclosure (T-30).
+- Final video (Zhang, T-17) and review of the official form (T-18).
 - Decisions for the video: demo sites and dates, recording plan, voice, editor (T-23).
 
 ## Dependency audit (14 Nov)
@@ -133,6 +149,17 @@ ESLint tooling (`typescript-eslint` packages). `npm audit --omit=dev` reports 0.
 deployed app is affected, so no update was made.
 
 ## Log
+
+### 15 Nov, 04:20–04:35 SGT
+
+- Teammates' new files collected (11 attachments, SHA-256 recorded outside this repository).
+- Yi's R3 evidence reproduced: 74 of 74 rows identical between production and Horizons at 04:25;
+  Apollo 11 sunrise bracket 01:55–01:56 UTC on 15 Nov, Apollo 17 12:38–12:39 UTC on 14 Nov.
+- Sean's 28 cases run on production build `86e8f04`, 04:26–04:30: 23 PASS, 1 FAIL, 3 BLOCKED, 1 NOT RUN.
+- Tan's R2 v2 compared with production; remaining items listed as T-31.
+- No application change in this step. The reference-point branch is still local and not pushed.
+- Deployment of the previous documentation commit: `86e8f04` pushed 04:06:25, Vercel status success
+  04:06:39, footer showed `86e8f04`.
 
 ### 15 Nov, 03:55–04:10 SGT
 
