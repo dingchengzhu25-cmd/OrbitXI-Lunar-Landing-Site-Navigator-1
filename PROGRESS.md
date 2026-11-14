@@ -1,6 +1,6 @@
 # Progress
 
-Last updated: 15 Nov 2026, 05:00 SGT
+Last updated: 15 Nov 2026, 04:50 SGT
 
 ## Current state
 
@@ -150,7 +150,7 @@ deployed app is affected, so no update was made.
 
 ## Log
 
-### 15 Nov, 04:48–05:00 SGT
+### 15 Nov, 04:43–04:50 SGT
 
 - Compliance audit for QA20. Read licences from the installed packages' own licence files;
   95 production entries in the lock file: MIT, ISC, BSD-3-Clause, 0BSD, Apache-2.0, plus
@@ -160,6 +160,8 @@ deployed app is affected, so no update was made.
 - README restructured into four compliance sections. An earlier README revision (`b81bca8`) had
   been recorded as "QA20 PASS"; on the stricter reading that every applicable requirement must be
   verified, it is corrected to PARTIAL.
+- Commit `ba5cfc4` pushed 04:46:59; Vercel status success 04:47:11; footer showed `ba5cfc4`; all 20
+  external links in the README opened signed out.
 - The two QuickMap addresses noted on 14 Nov are the same site: `quickmap.lroc.asu.edu` redirects
   to `quickmap.lroc.im-ldi.com`.
 
