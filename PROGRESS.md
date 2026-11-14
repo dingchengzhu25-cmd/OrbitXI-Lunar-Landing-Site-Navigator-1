@@ -1,6 +1,6 @@
 # Progress
 
-Last updated: 14 Nov 2026, 16:58 SGT
+Last updated: 14 Nov 2026, 18:35 SGT
 
 ## Current state
 
@@ -8,6 +8,10 @@ Phase 2 is complete locally and on GitHub. The app compares two lunar sites over
 range: Sun and Earth elevation charts (Site A vs Site B), sampled geometric visibility with
 estimated edges, a comparison summary, per-series source labels, and limitations. A production
 site exists at <https://orbitxi-lunar-landing-site-navigato.vercel.app>. There are **no lunar south-pole candidate sites** yet.
+
+Day 1 deliverables from four teammates have been collected and reviewed (see "Team inputs" below).
+None of them required a change to the application. The application is unchanged since commit
+`d490f6a`.
 
 ## Implemented and verified
 
@@ -38,6 +42,29 @@ site exists at <https://orbitxi-lunar-landing-site-navigato.vercel.app>. There a
   account's repository and blocked deployments from the other author.
 - Each automatic deployment is checked after the push and noted in the log below.
 
+## Team inputs (reviewed 14 Nov, 18:20 SGT)
+
+Teammates' files are kept outside this repository. Summary of what they mean for the app:
+
+| Area | Received | Result of review | Effect on the app |
+|---|---|---|---|
+| NASA data (Baoyi) | Source shortlist, retrieval inventory, integration notes | Accepted. Her untested Horizons request has the same form as the app's verified request | None. South-pole coordinates were not part of these rounds and are still missing |
+| Science (Yi) | Definitions, 11-test matrix, methods | Definitions accepted; they equal the app's provisional rule (disc centre, no refraction, strictly above 0°, gaps break windows). All 11 tests are NOT RUN | None yet. Thresholds stay PROVISIONAL |
+| UX (Tan) | Preliminary flow and wireframe | Pending his revision; not a sign-off | None. The design assumes a terrain skyline and a 90-day span; the app has no terrain and a 62-day limit |
+| Video (Zhang) | Concept, storyboard, narration and caption drafts, credits, placeholder animatic, editable timeline | Accepted with one wording check | None. The animatic is a placeholder, not the submission video |
+| QA (Sean) | — | In progress | — |
+
+Open points raised by the review:
+
+- Horizons labels its time scale UT; the app labels it UTC. To be ruled on in the science review.
+- Some of Yi's tests need 1-minute sampling, an offset-time input, or injected series; the app has
+  a 10-minute minimum step, UTC-only input and no injection. They need adapting or a direct
+  Horizons reference.
+- The video's opening line gives a maximum Sun elevation that holds at the pole itself; it must be
+  checked against the sites actually shown (T-24).
+- Two different addresses for QuickMap appear in teammates' files and in our documents; to be
+  checked against the challenge Resources tab before final credits.
+
 ## Not verified
 
 - Behaviour on phones (layout is responsive by design, not tested on a device).
@@ -67,7 +94,9 @@ Not ready to record: there is no south-pole site yet.
 ## Blockers
 
 - Two south-pole sites with cited coordinates (Baoyi, T-05).
-- Thresholds and frame confirmation (Yi, T-06).
+- Thresholds and frame confirmation (Yi, T-06, T-20). The handoff evidence has not yet been sent to
+  Yi or Baoyi (T-23).
+- Decisions for the video: demo sites and dates, recording plan, voice, editor (T-23).
 
 ## Dependency audit (14 Nov)
 
@@ -77,6 +106,16 @@ ESLint tooling (`typescript-eslint` packages). `npm audit --omit=dev` reports 0.
 deployed app is affected, so no update was made.
 
 ## Log
+
+### 14 Nov, 17:58–18:35 SGT
+
+- Collected teammates' Round 1–2 files (10 downloads, SHA-256 recorded) and reviewed them against
+  the mission briefs. Statuses are in "Team inputs" above; none is a final sign-off.
+- No application change was needed. Tasks T-22 to T-24 added; T-05, T-06, T-11, T-15, T-17, T-20
+  and T-21 statuses updated.
+- 18:28 SGT: production home page returned 200 and a live Horizons query through the app returned
+  data labelled `live`. Local and remote `main` both at `d490f6a` before this documentation commit.
+- No teammate message newer than 17:29 SGT at the 18:28 check.
 
 ### 14 Nov, 16:35–16:58 SGT
 
