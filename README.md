@@ -9,6 +9,8 @@ Earth sit relative to the local horizon, using ephemeris data from the
 
 **Live app:** <https://orbitxi-lunar-landing-site-navigato.vercel.app>
 
+**Repository:** <https://github.com/dingchengzhu25-cmd/OrbitXI-Lunar-Landing-Site-Navigator-1>
+
 ## Current status
 
 See [PROGRESS.md](PROGRESS.md) for the verified feature list. In short: two sites can be compared
@@ -29,7 +31,7 @@ Requires Node.js 20.19 or newer. No API keys or environment variables are needed
 ```bash
 npm install
 npm run dev        # http://localhost:3000
-npm test           # 102 tests; the network is replaced by real archived Horizons responses
+npm test           # 108 tests; the network is replaced by real archived Horizons responses
 npm run build      # production build
 ```
 
@@ -42,6 +44,8 @@ npm run build      # production build
 | [DATA_SOURCES.md](DATA_SOURCES.md) | NASA data used, tested requests, caveats, open questions |
 | [TASKS.md](TASKS.md) | Work items and owners |
 | [PROGRESS.md](PROGRESS.md) | What is verified, in progress, and not done |
+| [SCIENTIFIC_HANDOFF.md](SCIENTIFIC_HANDOFF.md) | Sample data, visibility results, and the science validation worksheet |
+| [DATA_PROVENANCE_HANDOFF.md](DATA_PROVENANCE_HANDOFF.md) | Which NASA data is integrated and verified; what is still needed |
 
 ## Credits
 

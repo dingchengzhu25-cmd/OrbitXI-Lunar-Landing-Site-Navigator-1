@@ -8,7 +8,7 @@ Status: todo / doing / blocked / done. Times are SGT.
 | T-01 | Scaffold app, tests, public repo | Asher | P0 | — | 14 Nov 15:00 | done |
 | T-02 | Verify Horizons Sun and Earth queries with real responses | Asher | P0 | — | 14 Nov 15:00 | done |
 | T-03 | Vertical slice: one site, Sun elevation chart from live data | Asher | P0 | T-02 | 14 Nov 15:00 | done |
-| T-04 | Deploy to Vercel and confirm public URL | Asher | P0 | T-01 | 14 Nov 17:00 | doing — URL live; confirming it serves the current commit |
+| T-04 | Deploy to Vercel and confirm public URL | Asher | P0 | T-01 | 14 Nov 17:00 | done — production verified 16:35; auto-deploy from `main` |
 | T-05 | Supply two south-pole sites with cited coordinates | Baoyi | P0 | — | 14 Nov 18:00 | todo |
 | T-06 | Define sunlit and Earth-visible thresholds; confirm frame | Yi | P0 | — | 14 Nov 18:00 | todo |
 | T-07 | Add Earth elevation to the chart | Asher | P0 | T-03 | 14 Nov 18:00 | done |
@@ -23,6 +23,8 @@ Status: todo / doing / blocked / done. Times are SGT.
 | T-16 | Feature freeze | Asher | P0 | T-12 | 15 Nov 13:00 | todo |
 | T-17 | Record 30-second demo video from the deployed app | Zhang | P0 | T-16 | 15 Nov 19:00 | todo |
 | T-19 | Decide whether Apollo presets stay in the submitted app | Asher | P1 | — | 15 Nov 10:00 | done — keep, grouped as validation examples |
+| T-20 | R3 scientific validation using `SCIENTIFIC_HANDOFF.md` worksheet | Yi | P0 | — | 15 Nov 12:00 | todo |
+| T-21 | Confirm data provenance and wording using `DATA_PROVENANCE_HANDOFF.md` | Baoyi | P0 | — | 15 Nov 12:00 | todo |
 | T-18 | Internal submission | Asher, Sean | P0 | T-15, T-17 | 15 Nov 21:00 | todo |
 
 ## Acceptance criteria for open P0 tasks

@@ -602,7 +602,7 @@ export function SiteComparison() {
               </li>
               <li>
                 Code, tests and stored responses:{" "}
-                <a className="text-sky-400 underline" href="https://github.com/Zdcgaryland69/OrbitXI-Lunar-Landing-Site-Navigator" target="_blank" rel="noreferrer">
+                <a className="text-sky-400 underline" href="https://github.com/dingchengzhu25-cmd/OrbitXI-Lunar-Landing-Site-Navigator-1" target="_blank" rel="noreferrer">
                   project repository
                 </a>
               </li>

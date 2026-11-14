@@ -31,7 +31,7 @@ error messages, and provenance.
 | Styling | Tailwind CSS 4 |
 | Charts | Recharts 3 |
 | Tests | Vitest |
-| Hosting | Vercel; pushes to `main` publish to production |
+| Hosting | Vercel, <https://orbitxi-lunar-landing-site-navigato.vercel.app>; pushes to `main` of <https://github.com/dingchengzhu25-cmd/OrbitXI-Lunar-Landing-Site-Navigator-1> publish to production |
 
 ## Source layout
 

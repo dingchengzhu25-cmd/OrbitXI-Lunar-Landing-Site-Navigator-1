@@ -1,6 +1,6 @@
 # Progress
 
-Last updated: 14 Nov 2026, 15:25 SGT
+Last updated: 14 Nov 2026, 17:05 SGT
 
 ## Current state
 
@@ -23,22 +23,25 @@ site exists at <https://orbitxi-lunar-landing-site-navigato.vercel.app>. There a
 | Cache, request coalescing, concurrency limit | Unit tests with a fake clock and a stubbed network |
 | API error handling (timeout, unreachable, 503, non-JSON, no table, wrong site, bad input) | Unit tests on the client and on both route handlers |
 | Site presets with cited coordinates, grouped as Historical Landing Sites — Validation Examples (six Apollo sites, NSSDCA) and Technical Verification (Tycho); each labelled NOT a lunar south-pole landing candidate | Coordinates copied from the NASA page read on 14 Nov; 9 unit tests on grouping, labels, citations, and the switch-over to South Pole Candidates |
-| Tests, lint, typecheck, production build | 102 tests pass; ESLint clean; `tsc --noEmit` clean; `next build` succeeds |
+| Tests, lint, typecheck, production build | 108 tests pass; ESLint clean; `tsc --noEmit` clean; `next build` succeeds |
 
 ## Production status
 
-- 15:14 SGT: the production URL answered and returned live Horizons data equal to a direct
-  Horizons request (25 Sun and 25 Earth rows, 0 mismatches), but it was serving a build from
-  before Phase 2. Pushes had not triggered deployments because the Vercel project was not yet
-  connected to the GitHub repository.
-- About 15:20 SGT: Asher connected the repository in Vercel. Pushes to `main` now publish
-  directly to production.
-- Whether production serves the current commit is recorded in the log below once checked.
+- Production: <https://orbitxi-lunar-landing-site-navigato.vercel.app>. Canonical repository: <https://github.com/dingchengzhu25-cmd/OrbitXI-Lunar-Landing-Site-Navigator-1>
+  (the old address redirects). Neither will be renamed or moved before the hackathon ends.
+- 16:35 SGT, verified on production: Phase 2 build with grouped presets; live Horizons data equal
+  to a direct Horizons request (25 Sun and 25 Earth rows, 0 mismatches); repeat query labelled
+  CACHED; bad input returns 400; archive labelled ARCHIVED; browser run loaded 4 of 4 series
+  with no console errors.
+- Pushes to `main` deploy to production automatically. The repository was moved to the GitHub
+  account that owns the Vercel project, because Vercel had been connected to a different
+  account's repository and blocked deployments from the other author.
+- Each automatic deployment is checked after the push and noted in the log below.
 
 ## Not verified
 - Behaviour on phones (layout is responsive by design, not tested on a device).
 - Whole-month queries at polar latitudes (only 6-hour and 3-day polar tests so far).
-- Scientific correctness of thresholds, frames, and site heights — awaiting Yi.
+- Scientific correctness of thresholds, frames, and site heights — awaiting Yi (see `SCIENTIFIC_HANDOFF.md`). Unit tests passing is not scientific validation.
 - Horizons behaviour under sustained load; its rate limits are undocumented.
 
 ## Not implemented
@@ -54,7 +57,7 @@ site exists at <https://orbitxi-lunar-landing-site-navigato.vercel.app>. There a
 | Item | Status |
 |---|---|
 | Public app URL | <https://orbitxi-lunar-landing-site-navigato.vercel.app> |
-| Repository | <https://github.com/Zdcgaryland69/OrbitXI-Lunar-Landing-Site-Navigator> |
+| Repository | <https://github.com/dingchengzhu25-cmd/OrbitXI-Lunar-Landing-Site-Navigator-1> |
 | Screenshots | `docs/screenshots/` — development screenshots from the local build, for reference only |
 | Approved wording | "Geometric centre-of-disc visibility only. Terrain obstruction, solar panel output and communication link quality are NOT modeled." |
 
@@ -73,6 +76,14 @@ ESLint tooling (`typescript-eslint` packages). `npm audit --omit=dev` reports 0.
 deployed app is affected, so no update was made.
 
 ## Log
+
+### 14 Nov, 16:35–17:05 SGT
+
+- Verified production independently after the manual deployment.
+- Repository moved to its canonical address; links updated in the app and documents.
+- Wrote `SCIENTIFIC_HANDOFF.md` (for Yi) and `DATA_PROVENANCE_HANDOFF.md` (for Baoyi), with a
+  small real data set in `docs/handoff-data/` and a test pinning the quoted numbers to it.
+- Recorded two leads for south-pole candidate sources; nothing added to the app.
 
 ### 14 Nov, 15:15–15:25 SGT
 
