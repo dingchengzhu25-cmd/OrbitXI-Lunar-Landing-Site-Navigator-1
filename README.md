@@ -22,7 +22,9 @@ Horizons data. Lunar south-pole candidate sites have not been added yet.
 The app reports **geometric** angles above the horizontal plane of a smooth reference sphere.
 It does not model terrain, so it cannot say whether a mountain or crater rim blocks the Sun or
 Earth. It does not estimate electrical power, thermal conditions, or guarantee communications.
-Details and sources are in [DATA_SOURCES.md](DATA_SOURCES.md).
+Elevation is measured in degrees from that horizontal plane; negative values are below it. Horizons
+also returns azimuth, measured clockwise from north; the app does not display azimuth. All times
+are UTC. Details and sources are in [DATA_SOURCES.md](DATA_SOURCES.md).
 
 ## Run locally
 
@@ -31,7 +33,7 @@ Requires Node.js 20.19 or newer. No API keys or environment variables are needed
 ```bash
 npm install
 npm run dev        # http://localhost:3000
-npm test           # 108 tests; the network is replaced by real archived Horizons responses
+npm test           # unit tests; the network is replaced by real archived Horizons responses
 npm run build      # production build
 ```
 
@@ -49,4 +51,39 @@ npm run build      # production build
 
 ## Credits
 
-Ephemeris data: NASA/JPL Horizons System. This project is not affiliated with or endorsed by NASA.
+This project is not affiliated with or endorsed by NASA.
+
+### NASA data and resources
+
+| Resource | Use in this project |
+|---|---|
+| [NASA/JPL Horizons System](https://ssd.jpl.nasa.gov/horizons/) and its [API](https://ssd-api.jpl.nasa.gov/doc/horizons.html) | Source of every Sun and Earth position shown. Each result links to the exact request. Listed in the challenge Resources. |
+| [NASA NSSDCA, Apollo Landing Site Coordinates](https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html) | Coordinates of the six Apollo validation sites |
+| [JPL Horizons manual](https://ssd.jpl.nasa.gov/horizons/manual.html) | Surface-site example (Tycho crater) used to test the data pipeline |
+
+### Software
+
+| Package | Version | Licence | Use |
+|---|---|---|---|
+| [Next.js](https://nextjs.org) | 16.4.6 | MIT | Web framework and server routes |
+| [React](https://react.dev/) and React DOM | 19.3.0 | MIT | User interface |
+| [Recharts](https://github.com/recharts/recharts) | 3.10.1 | MIT | Charts |
+| [Tailwind CSS](https://tailwindcss.com) | 4.3.3 | MIT | Styling |
+| [Geist and Geist Mono](https://vercel.com/font) typefaces, loaded through `next/font` | — | SIL Open Font License 1.1 | Text |
+| [TypeScript](https://www.typescriptlang.org/) | 5.9.3 | Apache-2.0 | Development |
+| [Vitest](https://vitest.dev) | 5.1.0 | MIT | Tests |
+| [ESLint](https://eslint.org) with eslint-config-next | 9.39.5 / 16.4.6 | MIT | Code checks |
+
+Exact versions of every package, including indirect ones, are in `package-lock.json`.
+The app is hosted on [Vercel](https://vercel.com). It contains no third-party images, video or audio.
+
+### Use of AI tools
+
+- **Code, tests and documentation in this repository** were written with Claude Code (Anthropic)
+  under the direction of the team lead, who reviewed the results. Automated tests and comparisons
+  against direct NASA/JPL Horizons requests are described in [PROGRESS.md](PROGRESS.md).
+- **Team planning, research notes and design documents** were prepared by team members with the
+  help of AI assistants (ChatGPT and Claude). Those documents are not part of the application.
+- **No data shown by the app is AI-generated.** Every number comes from a NASA/JPL Horizons
+  response or is calculated from one by the code in `src/lib`.
+- The app contains no AI-generated images, video or audio, and no NASA logos or branding.
