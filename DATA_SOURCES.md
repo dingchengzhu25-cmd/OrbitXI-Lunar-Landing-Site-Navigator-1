@@ -88,7 +88,7 @@ Earth-orientation predictions.
 | Tycho crater example | JPL Horizons manual surface-site example | Pipeline verification only. |
 | South-pole candidates | **None yet** | Waiting on Baoyi. |
 
-The NSSDCA coordinates are in a DE421-based mean-Earth frame; Horizons reports  with
+The NSSDCA coordinates are in a DE421-based mean-Earth frame; Horizons reports `MEAN_ME` with
 DE441. Whether the difference matters at our precision is a question for Yi.
 
 ## Visibility windows (provisional)
