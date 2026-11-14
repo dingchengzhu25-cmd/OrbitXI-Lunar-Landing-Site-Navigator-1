@@ -12,6 +12,7 @@ import {
   type SiteLoad,
 } from "@/lib/comparison";
 import type { ApiErrorBody, DataSourceKind, EphemerisResponse } from "@/lib/horizons/types";
+import { describeLongitude } from "@/lib/coordinates";
 import { LIMITS } from "@/lib/horizons/request";
 import { planRequest } from "@/lib/requestPlan";
 import { defaultSiteIds, findPreset, hasRegionalReferences, hasSouthPoleCandidates, KIND_LABEL, presetsByGroup } from "@/lib/sites";
@@ -596,7 +597,7 @@ export function SiteComparison() {
                     Site {i === 0 ? "A" : "B"}: {s.label}
                   </dt>
                   <dd className="mt-1 text-slate-300">
-                    Longitude {s.input.lon}° E, latitude {s.input.lat}°, height {s.input.alt} km
+                    Longitude {describeLongitude(s.input.lon)}, latitude {s.input.lat}°, height {s.input.alt} km
                   </dd>
                   <dd className="text-slate-400">{s.kindLabel}</dd>
                 </div>
