@@ -106,12 +106,19 @@ export function VisibilityTimeline({
         })}
         <div />
         <div className="relative h-5 text-[11px] text-ink-3">
-          {ticks.map((t) => {
+          {ticks.map((t, i) => {
             const frac = (t - startMs) / span;
             // Keep the first and last labels inside the track instead of spilling past its edges.
             const shift = frac < 0.04 ? "translate-x-0" : frac > 0.96 ? "-translate-x-full" : "-translate-x-1/2";
+            // Phones show only the first, middle and last dates so labels never overlap.
+            const last = ticks.length - 1;
+            const keepOnPhone = i === 0 || i === last || i === Math.floor(last / 2);
             return (
-              <span key={t} className={`absolute whitespace-nowrap font-mono ${shift}`} style={{ left: pct(t) }}>
+              <span
+                key={t}
+                className={`absolute whitespace-nowrap font-mono ${shift} ${keepOnPhone ? "" : "hidden sm:inline"}`}
+                style={{ left: pct(t) }}
+              >
                 {dayFmt.format(t)}
               </span>
             );

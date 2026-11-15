@@ -78,7 +78,9 @@ export function SkyView({ a, b, cursorMs }: { a: SiteSky; b: SiteSky; cursorMs: 
   const marker = (p: EphemerisPoint, body: "Sun" | "Earth") => {
     const cx = x(p.azDeg);
     const cy = y(p.elDeg);
-    const label = `${body} ${p.elDeg.toFixed(1)}° elevation, ${p.azDeg.toFixed(0)}° azimuth`;
+    // Near the horizon one decimal can read as "-0.0°"; two decimals keep the sign meaningful.
+    const el = Math.abs(p.elDeg) < 0.1 ? p.elDeg.toFixed(2) : p.elDeg.toFixed(1);
+    const label = `${body} ${el.replace("-", "−")}° elevation, ${p.azDeg.toFixed(0)}° azimuth`;
     const right = cx < R - 210;
     return (
       <g key={body}>
@@ -113,7 +115,10 @@ export function SkyView({ a, b, cursorMs }: { a: SiteSky; b: SiteSky; cursorMs: 
           ))}
         </div>
       </div>
-      <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label={`Sky view for Site ${which}: ${[sun && `Sun at ${sun.elDeg.toFixed(1)} degrees elevation`, earth && `Earth at ${earth.elDeg.toFixed(1)} degrees elevation`].filter(Boolean).join("; ")}, relative to the 0 degree geometric horizon.`}>
+      <p className="mb-1 text-xs text-ink-3 sm:hidden">Swipe sideways to see the whole horizon.</p>
+      {/* On phones the figure keeps a readable size and scrolls inside its own box; the page never scrolls sideways. */}
+      <div className="-mx-1 overflow-x-auto px-1">
+      <svg viewBox={`0 0 ${W} ${H}`} className="w-full min-w-[640px]" role="img" aria-label={`Sky view for Site ${which}: ${[sun && `Sun at ${sun.elDeg.toFixed(1)} degrees elevation`, earth && `Earth at ${earth.elDeg.toFixed(1)} degrees elevation`].filter(Boolean).join("; ")}, relative to the 0 degree geometric horizon.`}>
         <defs>
           <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0" stopColor="#02040a" />
@@ -164,6 +169,7 @@ export function SkyView({ a, b, cursorMs }: { a: SiteSky; b: SiteSky; cursorMs: 
           Azimuth, degrees clockwise from north
         </text>
       </svg>
+      </div>
       <p className="mt-1 text-xs text-ink-3">
         Positions are the NASA/JPL Horizons sample at the cursor (disc centres; markers not to scale). The dotted line
         is the Sun&apos;s path over the previous 72 hours. The star field is decorative. A terrain skyline is not modelled;

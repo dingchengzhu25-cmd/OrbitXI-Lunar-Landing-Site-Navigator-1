@@ -308,7 +308,7 @@ function Metric({ body, title, v, mode }: { body: "Sun" | "Earth" | "Both"; titl
       </div>
       {mode === "share" ? (
         <>
-          <div className="mt-1 font-mono text-[28px] leading-none text-ink tabular-nums">
+          <div className="mt-1 font-mono text-[22px] leading-none text-ink tabular-nums sm:text-[28px]">
             {(v.fractionOfSamples * 100).toFixed(1)}
             <span className="ml-0.5 text-base text-ink-2">%</span>
           </div>
@@ -318,7 +318,7 @@ function Metric({ body, title, v, mode }: { body: "Sun" | "Earth" | "Both"; titl
         </>
       ) : (
         <>
-          <div className="mt-1 font-mono text-[28px] leading-none text-ink tabular-nums">
+          <div className="mt-1 font-mono text-[22px] leading-none text-ink tabular-nums sm:text-[28px]">
             {v.windows.length === 0 ? "None" : `≈ ${fmtHours(v.longestEstimatedHours)}`}
           </div>
           <div className="mt-1.5 text-xs text-ink-2">
