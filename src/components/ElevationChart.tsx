@@ -12,6 +12,7 @@ import {
   YAxis,
 } from "recharts";
 import { domainTicks, fitElevationDomain, NEAR_HORIZON_HALF_RANGE_DEG, nearHorizonDomain } from "@/lib/chartDomain";
+import { tooltipLines, TOOLTIP_MAX_WIDTH } from "@/lib/chartTooltip";
 import type { EphemerisPoint } from "@/lib/horizons/types";
 
 export const SITE_A_COLOR = "#38bdf8";
@@ -158,10 +159,30 @@ export function ElevationChart({ body, siteA, siteB, thresholdDeg }: Props) {
             }}
           />
           <Tooltip
-            contentStyle={{ background: "#0f172a", border: "1px solid #334155", borderRadius: 6, fontSize: 12 }}
-            labelStyle={{ color: "#e2e8f0" }}
-            labelFormatter={(ms) => `${fullFmt.format(Number(ms))} UTC`}
-            formatter={(value, name) => [`${Number(value).toFixed(3)}° ${body} elevation`, name]}
+            // Never wider than the chart: long site names wrap instead of pushing the page sideways.
+            wrapperStyle={{ maxWidth: TOOLTIP_MAX_WIDTH, pointerEvents: "none" }}
+            content={({ active, label, payload }) => {
+              if (!active || !payload || payload.length === 0) return null;
+              const lines = tooltipLines(
+                body,
+                payload.map((p) => ({ name: String(p.name ?? ""), value: p.value as number | null | undefined, color: p.color })),
+              );
+              return (
+                <div
+                  data-testid={`tooltip-${body.toLowerCase()}`}
+                  className="rounded-md border border-slate-700 bg-slate-900 p-2 text-xs leading-snug"
+                  style={{ maxWidth: "100%", whiteSpace: "normal", overflowWrap: "anywhere" }}
+                >
+                  <div className="font-medium text-slate-200">{fullFmt.format(Number(label))} UTC</div>
+                  {lines.map((line) => (
+                    <div key={line.name} className="mt-1" style={{ color: line.color }}>
+                      <div>{line.name}</div>
+                      <div className="font-mono text-slate-100">{line.value}</div>
+                    </div>
+                  ))}
+                </div>
+              );
+            }}
           />
           {siteA.points && (
             <Line name={`A (solid): ${siteA.label}`} legendType="plainline" type="monotone" dataKey="a" stroke={SITE_A_COLOR} strokeWidth={2} dot={false} isAnimationActive={false} connectNulls={false} />
