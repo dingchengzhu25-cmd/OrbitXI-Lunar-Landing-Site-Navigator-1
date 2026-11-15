@@ -99,6 +99,16 @@ describe("fetchHorizonsEphemeris — failures", () => {
     expect(await code(fetchHorizonsEphemeris(REQ))).toBe("HORIZONS_HTTP");
   });
 
+  it.each([500, 502, 503, 504])("maps upstream HTTP %i to an error and never returns data", async (status) => {
+    fetchMock.mockResolvedValueOnce(new Response("upstream error", { status }));
+    expect(await code(fetchHorizonsEphemeris(REQ))).toBe("HORIZONS_HTTP");
+  });
+
+  it("refuses a valid table that covers a different time grid than requested", async () => {
+    fetchMock.mockResolvedValueOnce(okBody());
+    expect(await code(fetchHorizonsEphemeris({ ...REQ, stepMinutes: 120 }))).toBe("HORIZONS_MISMATCH");
+  });
+
   it("maps a non-JSON body", async () => {
     fetchMock.mockResolvedValueOnce(new Response("<html>", { status: 200 }));
     expect(await code(fetchHorizonsEphemeris(REQ))).toBe("HORIZONS_UNEXPECTED_FORMAT");
@@ -151,6 +161,16 @@ describe("API routes", () => {
     expect(noData.status).toBe(502);
     const body = await noData.json();
     expect(body.error.message).toMatch(/no ephemeris table/i);
+    expect(body.points).toBeUndefined();
+  });
+
+  it.each([502, 503, 504])("GET /api/ephemeris answers 502 with a message and no points when Horizons returns HTTP %i", async (status) => {
+    fetchMock.mockResolvedValueOnce(new Response("upstream error", { status }));
+    const res = await ephemerisGET(url(good));
+    expect(res.status).toBe(502);
+    const body = await res.json();
+    expect(body.error.code).toBe("HORIZONS_HTTP");
+    expect(body.error.message).toContain(String(status));
     expect(body.points).toBeUndefined();
   });
 
