@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { loadSample, SAMPLE_IDS } from "@/lib/samples";
 import a11Sun from "@/data/samples/apollo11-sun-2026-11-14_30d_60m.json";
 import { parseHorizonsObserverJson } from "./parse";
 import { HorizonsError, type HorizonsRequest, type ParsedEphemeris } from "./types";
@@ -56,6 +57,23 @@ describe("assertTimeGridMatchesRequest", () => {
     }));
     const req = { ...REQ, startUt: "2026-11-14 00:00", stopUt: "2026-11-15 00:00", stepMinutes: 420 };
     expect(mismatch(() => assertTimeGridMatchesRequest(p, req))).toBe("no error");
+  });
+
+  it("accepts a grid that crosses 29 February of a leap year, and refuses one that skips it", () => {
+    const p = parsed();
+    const req = { ...REQ, startUt: "2028-02-28 00:00", stopUt: "2028-03-01 00:00", stepMinutes: 720 };
+    const at = (d: number, h: number) => ({ t: new Date(Date.UTC(2028, 1, d, h)).toISOString(), azDeg: 0, elDeg: 0 });
+    // 28 Feb 00:00, 12:00; 29 Feb 00:00, 12:00; 1 Mar 00:00 (day 30 of February rolls over to 1 March).
+    p.points = [at(28, 0), at(28, 12), at(29, 0), at(29, 12), at(30, 0)];
+    expect(p.points[4].t).toBe("2028-03-01T00:00:00.000Z");
+    expect(mismatch(() => assertTimeGridMatchesRequest(p, req))).toBe("no error");
+
+    p.points = [at(28, 0), at(28, 12), at(30, 0), at(30, 12), at(31, 0)];
+    expect(mismatch(() => assertTimeGridMatchesRequest(p, req))).toBe("HORIZONS_MISMATCH");
+  });
+
+  it("accepts every archived NASA response stored in the repository", () => {
+    for (const id of SAMPLE_IDS) expect(loadSample(id)?.points.length, id).toBeGreaterThan(1);
   });
 });
 
