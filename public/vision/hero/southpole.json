@@ -1,0 +1,11 @@
+{
+ "sizeM": 81920.0,
+ "minM": -4251.29638671875,
+ "maxM": 1959.417724609375,
+ "source": "NASA GSFC PGDA LOLA 20 m/px south-polar elevation (LDEM_80S_20MPP_ADJ, Barker et al. 2023)",
+ "sourceUrl": "https://pgda.gsfc.nasa.gov/products/90",
+ "n": 1025,
+ "sunElDeg": 4.5,
+ "sunAzSceneDeg": -128.0,
+ "shadowFraction": 0.51
+}

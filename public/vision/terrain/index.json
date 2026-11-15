@@ -1,0 +1,110 @@
+[
+ {
+  "id": "nobile-rim-1-reference",
+  "name": "Nobile Rim 1",
+  "latDeg": -85.4381,
+  "lonEastDeg": 37.36667,
+  "sizeM": 24000.0,
+  "n": 257,
+  "minM": 955.551180035458,
+  "maxM": 6799.115227491685,
+  "source": "LOLA 20 m/px south-polar model (NASA GSFC PGDA, Barker et al. 2023)",
+  "sourceUrl": "https://pgda.gsfc.nasa.gov/products/90"
+ },
+ {
+  "id": "malapert-massif-reference",
+  "name": "Malapert Massif",
+  "latDeg": -85.9948,
+  "lonEastDeg": -0.23578,
+  "sizeM": 24000.0,
+  "n": 257,
+  "minM": 359.4617976605779,
+  "maxM": 5172.864730220213,
+  "source": "LOLA 20 m/px south-polar model (NASA GSFC PGDA, Barker et al. 2023)",
+  "sourceUrl": "https://pgda.gsfc.nasa.gov/products/90"
+ },
+ {
+  "id": "apollo11",
+  "name": "Apollo 11",
+  "latDeg": 0.67416,
+  "lonEastDeg": 23.47314,
+  "sizeM": 120000.0,
+  "n": 257,
+  "minM": -2598.2600793017523,
+  "maxM": -602.8172182588391,
+  "source": "LOLA 64 px/deg global model (~470 m/px; NASA SVS CGI Moon Kit)",
+  "sourceUrl": "https://svs.gsfc.nasa.gov/4720"
+ },
+ {
+  "id": "apollo12",
+  "name": "Apollo 12",
+  "latDeg": -3.0128,
+  "lonEastDeg": -23.4219,
+  "sizeM": 120000.0,
+  "n": 257,
+  "minM": -2467.528397160905,
+  "maxM": -671.5671609228183,
+  "source": "LOLA 64 px/deg global model (~470 m/px; NASA SVS CGI Moon Kit)",
+  "sourceUrl": "https://svs.gsfc.nasa.gov/4720"
+ },
+ {
+  "id": "apollo14",
+  "name": "Apollo 14",
+  "latDeg": -3.64589,
+  "lonEastDeg": -17.47194,
+  "sizeM": 120000.0,
+  "n": 257,
+  "minM": -2127.436322202168,
+  "maxM": -268.6628729019611,
+  "source": "LOLA 64 px/deg global model (~470 m/px; NASA SVS CGI Moon Kit)",
+  "sourceUrl": "https://svs.gsfc.nasa.gov/4720"
+ },
+ {
+  "id": "apollo15",
+  "name": "Apollo 15",
+  "latDeg": 26.13239,
+  "lonEastDeg": 3.6333,
+  "sizeM": 120000.0,
+  "n": 257,
+  "minM": -3029.589649808683,
+  "maxM": 2766.0293230126554,
+  "source": "LOLA 64 px/deg global model (~470 m/px; NASA SVS CGI Moon Kit)",
+  "sourceUrl": "https://svs.gsfc.nasa.gov/4720"
+ },
+ {
+  "id": "apollo16",
+  "name": "Apollo 16",
+  "latDeg": -8.9734,
+  "lonEastDeg": 15.5011,
+  "sizeM": 120000.0,
+  "n": 257,
+  "minM": -506.54390854143327,
+  "maxM": 2701.403945230578,
+  "source": "LOLA 64 px/deg global model (~470 m/px; NASA SVS CGI Moon Kit)",
+  "sourceUrl": "https://svs.gsfc.nasa.gov/4720"
+ },
+ {
+  "id": "apollo17",
+  "name": "Apollo 17",
+  "latDeg": 20.1911,
+  "lonEastDeg": 30.7723,
+  "sizeM": 120000.0,
+  "n": 257,
+  "minM": -3762.8395655048944,
+  "maxM": 439.08428802270964,
+  "source": "LOLA 64 px/deg global model (~470 m/px; NASA SVS CGI Moon Kit)",
+  "sourceUrl": "https://svs.gsfc.nasa.gov/4720"
+ },
+ {
+  "id": "tycho-example",
+  "name": "Tycho crater (Horizons example)",
+  "latDeg": -43.3,
+  "lonEastDeg": 348.8,
+  "sizeM": 120000.0,
+  "n": 257,
+  "minM": -3528.9898465696874,
+  "maxM": 1797.1235768920117,
+  "source": "LOLA 64 px/deg global model (~470 m/px; NASA SVS CGI Moon Kit)",
+  "sourceUrl": "https://svs.gsfc.nasa.gov/4720"
+ }
+]

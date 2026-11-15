@@ -271,3 +271,44 @@ For each of the two candidate sites:
 3. The threshold for "Earth geometrically visible".
 4. Wording for the terrain limitation.
 5. A manual spot check of two times per site against the Horizons web interface.
+
+## Moon imagery and terrain (figures only, added 2026-11-15)
+
+These feed **only** the 3D figures (hero, site globe, terrain close-ups). No visibility result,
+number in the summary or chart uses them; the results stay geometric on a smooth 1737.4 km sphere.
+Assets are rebuilt by `scripts/moon-assets/` (Python 3, numpy, Pillow, curl).
+
+| Figure | Data | Source |
+|---|---|---|
+| Globe colour | LRO LROC WAC colour mosaic, 8k downsampled to 4096 × 2048 | [NASA SVS CGI Moon Kit](https://svs.gsfc.nasa.gov/4720) `lroc_color_poles_8k.tif` |
+| Globe relief | LOLA elevation 16 px/deg (`ldem_16_uint.tif`, half-metres offset +20000 → metres); 1024 × 512 displacement grid and 4096 × 2048 normal map, relief ×6 (stated on the figure) | same |
+| Apollo / Tycho close-ups | LOLA 64 px/deg (~470 m/px), 120 km north-up tiles, read by HTTP range requests | same, `ldem_64_uint.tif` |
+| South-pole close-ups | LOLA 20 m/px south-polar model, 24 km north-up tiles | [NASA GSFC PGDA product 90](https://pgda.gsfc.nasa.gov/products/90), `LDEM_80S_20MPP_ADJ.TIF` (Barker et al. 2023) |
+| Hero | Same 20 m model, 81.92 km window centred on the pole; shading and cast shadows computed from these heights for an illustrative Sun 4.5° above the horizon | same |
+
+Tiles are resampled with an exact inverse azimuthal-equidistant grid centred on each preset's
+coordinates (`moonGeo.test.ts` checks every preset has a tile centred on exactly its coordinates).
+Pin placement on the globe is tested against three.js's own sphere mapping at every vertex.
+
+### Polar-stereographic axis convention: checked (2026-11-15)
+
+The open point in "Independent check … against NASA GSFC data" above (whether X points to 90° E)
+was checked on PGDA's `LDEM_80S_20MPP_ADJ` (same projection family, GeoTIFF metadata: sphere
+1737.4 km, south polar stereographic, true scale at the pole) using a known feature. With
+x = ρ·sin(λ), y = ρ·cos(λ), ρ = 2R·tan(45° + φ/2), the IAU centre of Shackleton crater
+(89.67° S, 129.78° E) reads **−2789 m** (the crater floor), while the mirrored position
+(x → −x) reads **+672 m** (ordinary terrain). So **X points to 90° E** on these products,
+which is the convention that reproduces the table's positive longitude for Nobile Rim 1.
+
+### LOLA surface height at the two reference points (for the science lead; NOT used by the app)
+
+Bilinear sample of the 20 m model at exactly the preset coordinates, metres above the 1737.4 km sphere:
+
+| Site | LOLA height |
+|---|---|
+| Nobile Rim 1 (−85.4381°, 37.36667° E) | ≈ +5946 m |
+| Malapert Massif (−85.9948°, −0.23578° E) | ≈ +4784 m |
+
+The app keeps the documented 0 km height for both. Whether to use these values as the observer
+height in Horizons (which lowers the geometric horizon, see "What the elevation value means") is
+a science decision and has not been made.

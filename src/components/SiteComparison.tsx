@@ -2,6 +2,8 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { BodyIcon } from "./BodyIcon";
+import { MoonGlobe, type GlobePin } from "./MoonGlobe";
+import { SiteTerrain } from "./SiteTerrain";
 import { ElevationChart, LineSample, SITE_A_COLOR, SITE_B_COLOR } from "./ElevationChart";
 import { SkyView } from "./SkyView";
 import { VisibilityTimeline } from "./VisibilityTimeline";
@@ -21,6 +23,7 @@ import { planRequest } from "@/lib/requestPlan";
 import { checkSiteInput, errorCount, type SiteFieldErrors } from "@/lib/siteInputCheck";
 import { defaultSiteIds, findPreset, hasRegionalReferences, hasSouthPoleCandidates, KIND_LABEL, presetsByGroup } from "@/lib/sites";
 import { compareSites, PROVISIONAL_CONFIG, type Visibility, type WindowEdge } from "@/lib/visibility";
+import { terrainTileFor } from "@/lib/moonGeo";
 
 const DEFAULT_START = "2026-11-14";
 const CUSTOM = "custom";
@@ -64,6 +67,12 @@ function describe(s: SiteInput): { label: string; kindLabel: string } {
   return p
     ? { label: p.name, kindLabel: KIND_LABEL[p.kind] }
     : { label: "Custom test location", kindLabel: "UNVERIFIED / EXPERIMENTAL — user-entered coordinates" };
+}
+
+/** Short site name for figure labels ("Nobile Rim 1", "Apollo 11"); the full name stays in the form. */
+function shortLabel(s: SiteInput): string {
+  const p = s.presetId === CUSTOM ? undefined : findPreset(s.presetId);
+  return p ? p.name.split(" — ")[0].split(" (")[0] : "Custom location";
 }
 
 function addDaysUtc(date: string, days: number): string {
@@ -353,6 +362,19 @@ export function SiteComparison() {
   const errorsB = checkSiteInput(siteB.lon, siteB.lat, siteB.alt);
   const inputErrors = errorCount(errorsA) + errorCount(errorsB);
 
+  // Globe pins follow the form as it is edited; a site with invalid coordinates has no pin.
+  const pinKey = [siteA, siteB].map((s) => `${s.presetId}|${s.lat}|${s.lon}`).join("/");
+  const pins = useMemo<GlobePin[]>(() => {
+    const out: GlobePin[] = [];
+    ([["A", siteA, errorsA], ["B", siteB, errorsB]] as const).forEach(([site, s, err]) => {
+      if (err.lat || err.lon) return;
+      out.push({ site, label: shortLabel(s), latDeg: Number(s.lat), lonEastDeg: Number(s.lon), color: site === "A" ? SITE_A_COLOR : SITE_B_COLOR });
+    });
+    return out;
+    // pinKey captures every input the pins depend on
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pinKey]);
+
   async function run(inputs: [SiteInput, SiteInput], fetcher: SeriesFetcher) {
     setStatus({ kind: "loading" });
     setPlaying(false);
@@ -464,9 +486,12 @@ export function SiteComparison() {
           <SectionTitle id="h-sites" n={1}>
             Choose two sites
           </SectionTitle>
-          <div className="mt-4 grid gap-4 md:grid-cols-2">
-            <SitePicker site="A" value={siteA} errors={errorsA} onChange={setSiteA} />
-            <SitePicker site="B" value={siteB} errors={errorsB} onChange={setSiteB} />
+          <div className="mt-4 grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
+            <div className="grid content-start gap-4 md:grid-cols-2 lg:grid-cols-1">
+              <SitePicker site="A" value={siteA} errors={errorsA} onChange={setSiteA} />
+              <SitePicker site="B" value={siteB} errors={errorsB} onChange={setSiteB} />
+            </div>
+            <MoonGlobe pins={pins} />
           </div>
           {hasRegionalReferences() && (
             <p role="note" className="mt-3 border border-caution-rule bg-caution p-3 text-xs leading-relaxed text-caution-ink">
@@ -773,10 +798,35 @@ export function SiteComparison() {
             </div>
           </section>
 
-          {/* 6. Sun / 7. Earth */}
+          {/* 6. Real terrain around each site (context only) */}
+          <section aria-labelledby="h-terrain" className={card}>
+            <SectionTitle id="h-terrain" n={6}>
+              The ground at each site
+            </SectionTitle>
+            <p className="mt-1 text-xs text-ink-2">
+              Measured NASA LRO laser-altimeter (LOLA) elevation around each site, at true vertical scale. Shown for
+              context: the results above use a smooth sphere and do not account for this terrain.
+            </p>
+            <div className="mt-4 grid gap-4 lg:grid-cols-2">
+              {sites.map((s, i) => {
+                const site = i === 0 ? "A" : "B";
+                const tile = terrainTileFor(s.input.presetId);
+                return tile ? (
+                  <SiteTerrain key={site + tile.id} site={site} label={shortLabel(s.input)} color={i === 0 ? SITE_A_COLOR : SITE_B_COLOR} tile={tile} />
+                ) : (
+                  <p key={site} className="flex min-h-40 items-center justify-center border border-dashed border-rule-strong p-6 text-center text-sm text-ink-2">
+                    Site {site}: terrain close-ups are prepared for the preset sites only. Custom coordinates are shown on
+                    the globe in section 1.
+                  </p>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* 7. Sun / 8. Earth */}
           <div className="grid gap-4 lg:grid-cols-2">
             <section aria-labelledby="h-sun" className={card}>
-              <SectionTitle id="h-sun" n={6}>
+              <SectionTitle id="h-sun" n={7}>
                 <BodyIcon body="Sun" size={22} className="mr-2" />
                 Sun elevation
               </SectionTitle>
@@ -790,7 +840,7 @@ export function SiteComparison() {
               />
             </section>
             <section aria-labelledby="h-earth" className={card}>
-              <SectionTitle id="h-earth" n={7}>
+              <SectionTitle id="h-earth" n={8}>
                 <BodyIcon body="Earth" size={22} className="mr-2" />
                 Earth elevation
               </SectionTitle>
@@ -805,9 +855,9 @@ export function SiteComparison() {
             </section>
           </div>
 
-          {/* 8. Geometric visibility in detail */}
+          {/* 9. Geometric visibility in detail */}
           <section aria-labelledby="h-vis" className={card}>
-            <SectionTitle id="h-vis" n={8}>
+            <SectionTitle id="h-vis" n={9}>
               Geometric visibility in detail
             </SectionTitle>
             <p role="note" className="mt-4 border-2 border-caution-rule bg-caution p-3 text-sm font-semibold text-caution-ink">
@@ -902,7 +952,7 @@ export function SiteComparison() {
 
       {/* Data source & limitations */}
       <section aria-labelledby="h-source" className={card} id="sources">
-        <SectionTitle id="h-source" n={sites ? 9 : undefined}>
+        <SectionTitle id="h-source" n={sites ? 10 : undefined}>
           Data source &amp; limitations
         </SectionTitle>
         <div className="mt-4 grid gap-6 text-sm text-ink-2 md:grid-cols-2">
@@ -945,6 +995,17 @@ export function SiteComparison() {
                   project repository
                 </a>
               </li>
+              <li>
+                Moon imagery and terrain (figures only, not used in any calculation):{" "}
+                <a className="text-accent-hover underline underline-offset-2" href="https://svs.gsfc.nasa.gov/4720" target="_blank" rel="noreferrer">
+                  NASA SVS CGI Moon Kit
+                </a>{" "}
+                (LRO LROC WAC colour, LOLA elevation) and{" "}
+                <a className="text-accent-hover underline underline-offset-2" href="https://pgda.gsfc.nasa.gov/products/90" target="_blank" rel="noreferrer">
+                  NASA GSFC PGDA LOLA 20 m south-polar elevation
+                </a>{" "}
+                (Barker et al. 2023)
+              </li>
               <li className="text-ink-3">
                 Imagery, for identification and decoration only (not used in any calculation): Sun disk from NASA SDO/HMI
                 (14 Nov 2026); Earth disk from NASA EPIC on DSCOVR (11 Nov 2026); star field from{" "}
@@ -980,8 +1041,9 @@ export function SiteComparison() {
                 site, for the centre of the Sun or Earth.
               </li>
               <li>
-                <strong className="text-ink">Terrain is not included.</strong> Mountains and crater rims can hide the Sun or Earth even when
-                the angle is positive, especially near the lunar poles.
+                <strong className="text-ink">Terrain is not included in the results.</strong> Mountains and crater rims can hide the Sun or
+                Earth even when the angle is positive, especially near the lunar poles. The 3D globe and terrain views show real
+                NASA LOLA elevation for context only; no shadowing or terrain horizon is calculated from them.
               </li>
               <li>This is not a solar-power or temperature estimate.</li>
               <li>Earth above the horizon does not guarantee a working communication link.</li>

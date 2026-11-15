@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element -- one static decorative backdrop */
+import { HeroTerrain } from "@/components/HeroTerrain";
 import { SiteComparison } from "@/components/SiteComparison";
 
 function Wordmark() {
@@ -36,8 +37,10 @@ export default function Home() {
           aria-hidden="true"
           className="absolute inset-0 -z-10 h-full w-full object-cover object-[70%_50%] brightness-[1.7] saturate-[1.15]"
         />
-        <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-r from-black via-black/70 to-transparent" />
-        <div className="mx-auto w-full max-w-6xl px-4 pt-14 pb-12 sm:px-6 sm:pt-20 sm:pb-16">
+        <HeroTerrain />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-r from-black via-black/60 to-transparent" />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-24 bg-gradient-to-t from-black to-transparent" />
+        <div className="mx-auto flex min-h-[520px] w-full max-w-6xl flex-col justify-center px-4 pt-14 pb-16 sm:min-h-[620px] sm:px-6">
           <p className="text-sm text-ink-2">Team OrbitXI, NASA Space Apps Challenge 2026</p>
           <h1 id="h-title" className="mt-3 max-w-3xl font-display text-[44px] leading-[0.98] font-light tracking-[-0.025em] text-ink sm:text-[68px]">
             Lunar Landing Site Navigator
@@ -48,12 +51,15 @@ export default function Home() {
           </p>
           <a
             href="#compare"
-            className="mt-7 inline-block rounded-sm border border-ink/70 bg-black/40 px-5 py-2.5 text-[15px] text-ink transition-colors hover:bg-ink hover:text-space"
+            className="mt-7 inline-block self-start rounded-sm border border-ink/70 bg-black/40 px-5 py-2.5 text-[15px] text-ink transition-colors hover:bg-ink hover:text-space"
           >
             Start a comparison
           </a>
         </div>
-        <p className="absolute right-4 bottom-2 text-[11px] text-ink-3 sm:right-6">Milky Way: NASA SVS Deep Star Maps 2020</p>
+        <p className="absolute right-4 bottom-2 left-4 text-right text-[11px] leading-snug text-ink-3 sm:right-6">
+          Terrain around the lunar south pole: NASA LRO LOLA 20 m elevation (GSFC PGDA), true vertical scale; lighting
+          illustrative. Sky: NASA SVS Deep Star Maps 2020.
+        </p>
       </section>
 
       <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-10 sm:px-6">
