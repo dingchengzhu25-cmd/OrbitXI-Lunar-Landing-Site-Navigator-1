@@ -1,11 +1,71 @@
 @import "tailwindcss";
 
+/*
+ * OrbitXI visual system (UX lead, R1 prototype).
+ * Black space, white text tiers, one NASA-style blue for the primary action and focus.
+ * Sun and Earth are identified by real NASA imagery and words; Site A / Site B keep
+ * their chart colours and solid / dashed line styles.
+ * `inline` is needed because the font tokens reference next/font CSS variables.
+ */
 @theme inline {
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-space: #000000;
+  --color-panel: #05070b;
+  --color-raised: #0b1018;
+  --color-rule: #1b2330;
+  --color-rule-strong: #2a3446;
+  --color-ink: #f3f5f9;
+  --color-ink-2: #a4adbb;
+  --color-ink-3: #808999;
+  --color-accent: #3d74ff;
+  --color-accent-hover: #5585ff;
+  --color-sun: #ffcf73;
+  --color-earth: #8fd0ff;
+  --color-notice: #06101f;
+  --color-notice-rule: #1f3566;
+  --color-notice-ink: #c9d7f2;
+  --color-caution: #1c1606;
+  --color-caution-rule: #5c4a17;
+  --color-caution-ink: #f1dca4;
+  --color-fail: #ff8a70;
+
+  --font-display: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-plex-sans), system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, Menlo, monospace;
 }
 
 html {
   color-scheme: dark;
-  background: #020617;
+  background: #000000;
+}
+
+body {
+  font-feature-settings: "kern", "liga";
+}
+
+::selection {
+  background: rgba(61, 116, 255, 0.45);
+  color: #ffffff;
+}
+
+:focus-visible {
+  outline: 2px solid #3d74ff;
+  outline-offset: 2px;
+}
+
+/* Hatched fill for Site B bars in the visibility timeline (pattern = site, as on the charts). */
+.hatch {
+  background-image: repeating-linear-gradient(
+    135deg,
+    currentColor 0 2px,
+    transparent 2px 6px
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
