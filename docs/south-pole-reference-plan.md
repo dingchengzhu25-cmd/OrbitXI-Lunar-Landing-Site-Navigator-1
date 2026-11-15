@@ -1,6 +1,7 @@
 # South-pole regional reference points — integration plan
 
-Status on 15 Nov 2026, 05:15 SGT: **on a review branch with a draft pull request; not merged, not on production.**
+Status on 15 Nov 2026, 16:50 SGT: **on a review branch with a draft pull request; not merged, not on production.**
+Science review: conditional go for an approximate regional geometric comparison only (see `DATA_SOURCES.md`). The merge needs Asher's explicit approval.
 Asher decided on 15 Nov to show these points as the primary demonstration, with Apollo 11 / 17 as the verified fallback, once the gates below are met.
 
 ## What would be added
@@ -35,10 +36,11 @@ Branch `south-pole-reference-points`, rebased on `main` at `da01b5a` and pushed 
 | # | Gate | Owner | State |
 |---|---|---|---|
 | 1 | The two rows are read from the NASA PDF itself by someone on the team | Asher | **done 15 Nov** — Asher confirmed both rows from the PDF's searchable text (document page 59 of 70). Corroborated from NASA GSFC PGDA map headers. A visual look at the table page is still desirable (the page image could not be retrieved) |
-| 2 | Longitude convention of the table (east-positive, ±180°) confirmed from the document | Yi | supported by the PGDA maps under the usual polar-stereographic convention; formal confirmation open |
-| 3 | Frame of the table compared with Horizons `MEAN_ME` | Yi | source frame identified as Moon ME, DE421 (PGDA); size of the difference from Horizons `MEAN_ME` (DE441) not quantified — open |
-| 4 | Height: accept the 0 km assumption with its wording, or supply a value with a source | Yi | open |
-| 5 | Wording of the badge and notice approved | Yi, Asher | open — proposed wording is on the branch |
+| 2 | Longitude convention of the table (east-positive, ±180°) | Yi | **conditional (15 Nov)** — Horizons normalisation verified; the table's own convention not formally confirmed. Wording must not state the sign as settled |
+| 3 | Frame of the table compared with Horizons `MEAN_ME` | Yi | **conditional (15 Nov)** — convention documented; no error bound. Suitable for an approximate regional comparison only |
+| 4 | Height: accept the 0 km assumption with its wording, or supply a value with a source | Yi | **conditional (15 Nov)** — accepted as a stated, unmeasured assumption |
+| 5 | Wording of the badge and notice approved | Yi, Asher | Yi: acceptable once the "few degrees" sentence was replaced (done on the branch, 15 Nov). **Asher's explicit merge approval: open** |
+| 9 | Polar sampling | Yi | **conditional (15 Nov)** — hourly vs 10-minute crossings within 3.14 s on the smooth sphere, reproduced by the developer; physical accuracy not verified |
 | 8 | Production QA after merge: Sean's case QA26 and a smoke run on the new build | developer, Sean | open |
 | 6 | Horizons returns a full month for both points | developer | done 15 Nov — 721 hourly rows per series; production output equal to direct Horizons |
 | 7 | Tests, lint, type check, build | developer | done on the branch |

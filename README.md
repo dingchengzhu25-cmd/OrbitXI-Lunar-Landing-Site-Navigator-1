@@ -79,9 +79,14 @@ Six unmodified Horizons responses are stored in `src/data/samples/` and four in
 model and performs no SPICE calculation.
 
 Review status: a team member compared 74 rows of app output with direct Horizons requests and
-checked two sunrise times; the developer reproduced that comparison. The coordinate frame of cited
-sites against the frame Horizons uses, and the behaviour of visibility windows near the pole, have
-not been validated. Details are in [PROGRESS.md](PROGRESS.md).
+checked two sunrise times; the developer reproduced that comparison. For the two regional
+reference points the team's science reviewer gave a **conditional** go for an approximate regional
+geometric comparison only. Open conditions: the longitude direction of the source table is
+interpreted as east-positive but not formally confirmed; the precision of the source frame (Moon
+ME, DE421) against the site frame Horizons reports (`MEAN_ME`) has no error bound; the 0 km height
+is an unmeasured assumption; visibility near the pole is a sampled geometric estimate whose
+physical accuracy has not been verified. It is not an approval of any landing site. Details are in
+[DATA_SOURCES.md](DATA_SOURCES.md).
 
 ### Third-Party Software & Licenses
 

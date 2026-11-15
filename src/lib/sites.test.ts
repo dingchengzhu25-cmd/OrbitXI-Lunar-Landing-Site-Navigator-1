@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
 import {
   defaultSiteIds,
@@ -112,6 +114,30 @@ describe("south-pole regional reference points", () => {
         expect(r.value.latDeg).toBe(p.latDeg);
         expect(r.value.lonEastDeg).toBe(p.lonEastDeg < 0 ? 359.76422 : p.lonEastDeg);
       }
+    }
+  });
+});
+
+describe("public wording for the regional reference points", () => {
+  const page = readFileSync(fileURLToPath(new URL("../components/SiteComparison.tsx", import.meta.url)), "utf8").replace(/\s+/g, " ");
+
+  it("does not say the Sun and Earth stay within a few degrees of the horizon", () => {
+    // Earth reaches about +10.26° at Malapert Massif in the month tested, so that sentence was wrong.
+    expect(page).not.toMatch(/within a few degrees/i);
+    expect(page).not.toMatch(/stay (close to|near) the horizon/i);
+  });
+
+  it("keeps every required qualification in the notice", () => {
+    for (const phrase of [
+      "NASA 2023 regional reference points are NOT NASA-approved landing points.",
+      "not necessarily the centres of the 2024 Artemis III candidate regions",
+      "sampled geometric estimates",
+      "over a smooth sphere only",
+      "Site height is assumed to be 0 km.",
+      "close to the smooth-sphere horizon at some times",
+      "No terrain, power output or radio-link performance is modelled.",
+    ]) {
+      expect(page, phrase).toContain(phrase);
     }
   });
 });
