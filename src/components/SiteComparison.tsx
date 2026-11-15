@@ -340,7 +340,8 @@ export function SiteComparison() {
           <h2 id="h-dates" className="mb-2 text-lg font-semibold text-slate-50">
             2. Date Range (UTC)
           </h2>
-          <div className="grid grid-cols-3 gap-3 sm:max-w-xl">
+          {/* One column on phones so the native date field shows its whole value; three columns from 640 px. */}
+          <div className="grid grid-cols-1 gap-3 sm:max-w-xl sm:grid-cols-3" data-testid="date-range-fields">
             <label className={labelCls}>
               Start date
               <input className={field} type="date" value={start} onChange={(e) => setStart(e.target.value)} required />
