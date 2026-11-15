@@ -12,9 +12,10 @@ import {
   type SiteLoad,
 } from "@/lib/comparison";
 import type { ApiErrorBody, DataSourceKind, EphemerisResponse } from "@/lib/horizons/types";
+import { describeLongitude } from "@/lib/coordinates";
 import { LIMITS } from "@/lib/horizons/request";
 import { planRequest } from "@/lib/requestPlan";
-import { defaultSiteIds, findPreset, hasSouthPoleCandidates, KIND_LABEL, presetsByGroup } from "@/lib/sites";
+import { defaultSiteIds, findPreset, hasRegionalReferences, hasSouthPoleCandidates, KIND_LABEL, presetsByGroup } from "@/lib/sites";
 import { compareSites, PROVISIONAL_CONFIG, type Visibility, type WindowEdge } from "@/lib/visibility";
 
 const DEFAULT_START = "2026-11-14";
@@ -315,7 +316,18 @@ export function SiteComparison() {
             <SitePicker site="A" value={siteA} onChange={setSiteA} />
             <SitePicker site="B" value={siteB} onChange={setSiteB} />
           </div>
-          {!hasSouthPoleCandidates() && (
+          {hasRegionalReferences() && (
+            <p role="note" className="mt-2 rounded border border-amber-500/50 bg-amber-950/30 p-2 text-xs text-amber-100">
+              <strong>NASA 2023 regional reference points are NOT NASA-approved landing points.</strong> They are
+              centre points of region polygons in a 2023 NASA reference table, and not necessarily the centres of the
+              2024 Artemis III candidate regions. Results for them are sampled geometric estimates of Sun and Earth
+              disc-centre visibility over a smooth sphere only. Site height is assumed to be 0 km. Near-polar
+              geometry can place the Sun or Earth close to the smooth-sphere horizon at some times; even small
+              geometric or terrain differences may change whether a sample counts as visible. No terrain, power
+              output or radio-link performance is modelled.
+            </p>
+          )}
+          {!hasSouthPoleCandidates() && !hasRegionalReferences() && (
             <p className="mt-2 rounded border border-slate-700 bg-slate-900/40 p-2 text-xs text-slate-300">
               <strong>Lunar south-pole candidate sites are pending.</strong> They will be added once coordinates with a
               citable NASA source are confirmed. The locations offered now are validation examples and are NOT lunar
@@ -586,7 +598,7 @@ export function SiteComparison() {
                     Site {i === 0 ? "A" : "B"}: {s.label}
                   </dt>
                   <dd className="mt-1 text-slate-300">
-                    Longitude {s.input.lon}° E, latitude {s.input.lat}°, height {s.input.alt} km
+                    Longitude {describeLongitude(s.input.lon)}, latitude {s.input.lat}°, height {s.input.alt} km
                   </dd>
                   <dd className="text-slate-400">{s.kindLabel}</dd>
                 </div>
@@ -626,6 +638,19 @@ export function SiteComparison() {
                   NASA NSSDCA
                 </a>
               </li>
+              {hasRegionalReferences() && (
+                <li>
+                  NASA 2023 regional reference coordinates:{" "}
+                  <a
+                    className="text-sky-400 underline"
+                    href="https://ntrs.nasa.gov/api/citations/20230007818/downloads/ACD-50044%20Lunar%20Surface%20Data%20Book%20Rev%20A.pdf"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    NASA Lunar Surface Data Book, ACD-50044 Rev A (2023), Table A2-2
+                  </a>
+                </li>
+              )}
               <li>
                 Code, tests and stored responses:{" "}
                 <a className="text-sky-400 underline" href="https://github.com/dingchengzhu25-cmd/OrbitXI-Lunar-Landing-Site-Navigator-1" target="_blank" rel="noreferrer">

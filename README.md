@@ -15,7 +15,8 @@ Earth sit relative to the local horizon, using ephemeris data from the
 
 See [PROGRESS.md](PROGRESS.md) for the verified feature list. In short: two sites can be compared
 over the same dates, with Sun and Earth elevation charts and geometric visibility metrics from live
-Horizons data. Lunar south-pole candidate sites have not been added yet.
+Horizons data. Two NASA 2023 regional reference points near the lunar south pole can be selected;
+they are not landing sites, and no south-pole candidate site is claimed.
 
 ## What the numbers mean
 
@@ -61,6 +62,7 @@ This project is not affiliated with or endorsed by NASA. Last checked: 15 Novemb
 |---|---|
 | [NASA/JPL Horizons System](https://ssd.jpl.nasa.gov/horizons/), through the [Horizons API](https://ssd-api.jpl.nasa.gov/doc/horizons.html) | Every Sun and Earth position shown (observer tables for a site on the Moon; ephemeris DE441, as reported in each response). Each result in the app links to the exact request. Horizons is listed in the challenge Resources. |
 | [NASA NSSDCA, Apollo Landing Site Coordinates](https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html) | Coordinates of the six Apollo sites offered as validation examples |
+| NASA Artemis Campaign Development, *Lunar Surface Data Book*, ACD-50044 Rev A (2023), Appendix A2, Table A2-2 ([NASA NTRS](https://ntrs.nasa.gov/api/citations/20230007818/downloads/ACD-50044%20Lunar%20Surface%20Data%20Book%20Rev%20A.pdf)) | Coordinates of the two regional reference points (Nobile Rim 1, Malapert Massif): centre points of region polygons, not landing sites; height not given, 0 km assumed |
 | [JPL Horizons manual](https://ssd.jpl.nasa.gov/horizons/manual.html) | The surface-site example (Tycho crater) used to test the data pipeline |
 
 Six unmodified Horizons responses are stored in `src/data/samples/` and four in
@@ -70,16 +72,21 @@ Six unmodified Horizons responses are stored in `src/data/samples/` and four in
 
 | Source | Status |
 |---|---|
-| NASA *Lunar Surface Data Book*, ACD-50044 Rev A (2023), Table A2-2 | Two south-pole regional reference points were transcribed for review. They are not in the app. See [DATA_SOURCES.md](DATA_SOURCES.md). |
+| [NASA GSFC PGDA, High-Resolution LOLA Topography for Lunar South Pole Sites](https://pgda.gsfc.nasa.gov/products/78) | Map headers read once to cross-check the two reference coordinates. No elevation data is used. |
 | [LROC QuickMap](https://quickmap.lroc.im-ldi.com/), [NASA Moon Trek](https://trek.nasa.gov/moon/), [CSA Moon Exploration](https://www.asc-csa.gc.ca/eng/astronomy/moon-exploration/) | Listed by the challenge; read for background; not used |
 
 **Not integrated:** LOLA or any other terrain data, SPICE kernels, imagery. The app has no terrain
 model and performs no SPICE calculation.
 
 Review status: a team member compared 74 rows of app output with direct Horizons requests and
-checked two sunrise times; the developer reproduced that comparison. The coordinate frame of cited
-sites against the frame Horizons uses, and the behaviour of visibility windows near the pole, have
-not been validated. Details are in [PROGRESS.md](PROGRESS.md).
+checked two sunrise times; the developer reproduced that comparison. For the two regional
+reference points the team's science reviewer gave a **conditional** go for an approximate regional
+geometric comparison only. Open conditions: the longitude direction of the source table is
+interpreted as east-positive but not formally confirmed; the precision of the source frame (Moon
+ME, DE421) against the site frame Horizons reports (`MEAN_ME`) has no error bound; the 0 km height
+is an unmeasured assumption; visibility near the pole is a sampled geometric estimate whose
+physical accuracy has not been verified. It is not an approval of any landing site. Details are in
+[DATA_SOURCES.md](DATA_SOURCES.md).
 
 ### Third-Party Software & Licenses
 

@@ -109,7 +109,7 @@ Earth-orientation predictions.
 |---|---|---|
 | Apollo 11, 12, 14, 15, 16, 17 Lunar Modules | NASA NSSDCA, [Apollo Landing Site Coordinates](https://nssdc.gsfc.nasa.gov/planetary/lunar/lunar_sites.html), read 2026-11-14 | Page states: planetocentric Mean Earth/Polar Axis system, DE421, from LRO images (Wagner et al., Icarus 283, 2017). No heights given; the app uses 0 km. Historical sites, not south-pole candidates. |
 | Tycho crater example | JPL Horizons manual surface-site example | Pipeline verification only. |
-| South-pole regional reference points: Nobile Rim 1 (−85.4381°, +37.36667°), Malapert Massif (−85.9948°, −0.23578°) | NASA Artemis Campaign Development, *Lunar Surface Data Book*, ACD-50044 Rev A (2023), Appendix A2, Table A2-2, rows R06 / Site06 and R23 / Site23, [NASA NTRS](https://ntrs.nasa.gov/api/citations/20230007818/downloads/ACD-50044%20Lunar%20Surface%20Data%20Book%20Rev%20A.pdf) | **RESEARCHED, NOT IN THE APP.** Supplied by Asher on 15 Nov as a supplement to Baoyi's inventory. Centres of region polygons in a 2023 reference table; not exact landing points and not NASA-approved landing sites. The table gives no height. The developer could not open the PDF (HTTP 403) and has not re-read the rows. Longitude convention and frame not confirmed. |
+| South-pole regional reference points: Nobile Rim 1 (−85.4381°, +37.36667°), Malapert Massif (−85.9948°, −0.23578°) | NASA Artemis Campaign Development, *Lunar Surface Data Book*, ACD-50044 Rev A (2023), Appendix A2, Table A2-2, rows R06 / Site06 and R23 / Site23, [NASA NTRS](https://ntrs.nasa.gov/api/citations/20230007818/downloads/ACD-50044%20Lunar%20Surface%20Data%20Book%20Rev%20A.pdf) | **IN THE APP ON THIS BRANCH as "NASA 2023 regional reference points"; not on production.** Supplied by Asher on 15 Nov. Both rows confirmed by Asher on 15 Nov from the searchable text of the NASA PDF (document page 59 of 70); a visual check of the table page is still desirable, and the development computer still cannot open the PDF (HTTP 403). Independently corroborated from NASA GSFC PGDA map headers (below). Centre points of original region polygons; not exact landing points, not NASA-approved landing sites, not necessarily the centres of the 2024 regions. The table gives no height; 0 km is assumed. Longitude direction and frame conversion: see below, not closed. |
 | South-pole candidates | **None** | Both names appear in NASA's October 2024 list of nine Artemis III candidate regions (per Asher's research; that release gives no coordinates). The 2023 points are not claimed to be the centres of the 2024 regions. |
 
 ### Independent check of the two reference points against NASA GSFC data (2026-11-15)
@@ -145,9 +145,46 @@ What this establishes:
   and not necessarily on the feature's summit or rim.
 
 What it does not establish: the size of the difference between Moon ME (DE421) and the
-`MEAN_ME` frame Horizons reports with DE441; the real surface height at these points; anything
+`MEAN_ME (high precision)` site frame Horizons reports (DE441 is the ephemeris Horizons uses for
+the bodies; it is not the name of the site frame); the real surface height at these points; anything
 about terrain. Height matters here: an observer on high ground sees a lower horizon, and the app
 assumes 0 km and does not calculate that effect.
+
+### Science review of the reference points and sampling check (2026-11-15)
+
+The team's science reviewer (Yi Guo) reviewed the two points on 15 Nov and gave a **conditional go
+for an approximate regional geometric comparison only**. As reported to the developer (her review
+document itself was not available on the development computer), the five parts were:
+
+| Part | Outcome | What remains conditional |
+|---|---|---|
+| Coordinate interpretation | Passing −0.23578° or 359.76422° E to Horizons gives the same output | The east-positive reading of the source table is not formally confirmed |
+| Reference frame | The underlying mean-Earth/polar-axis convention is documented on both sides | No error bound on Moon ME (DE421) coordinates used in Horizons' `MEAN_ME` site frame |
+| Height | 0 km accepted as a stated modelling assumption | Unmeasured; a trial at +1 km does not bound the real terrain horizon. On a smooth sphere an observer 1 km up sees the horizon about 1.94° lower |
+| Polar sampling | Hourly and 10-minute sampling agree closely for the month tested | Physical accuracy of the windows is not verified |
+| Public wording | Acceptable with one correction (below) | Preview page and video not reviewed |
+
+Correction made: an earlier notice said the Sun and Earth "stay within a few degrees of the
+horizon". Earth reaches +10.26° at Malapert Massif in the month tested, so the sentence was
+replaced.
+
+Developer's own repeat of the sampling and longitude checks, direct Horizons requests,
+2026-11-14 to 2026-12-14 UT, retrieved 2026-11-15 08:41 UTC:
+
+| Series | Rows at 60 min / 10 min | Samples above 0° | Fraction above 0° | Horizon crossings | Largest difference between the two crossing estimates |
+|---|---|---|---|---|---|
+| Nobile Rim 1 · Sun | 721 / 4321 | 439 / 2628 | 60.9% / 60.8% | 2 | 1.20 s |
+| Nobile Rim 1 · Earth | 721 / 4321 | 468 / 2810 | 64.9% / 65.0% | 3 | 2.92 s |
+| Malapert Massif · Sun | 721 / 4321 | 443 / 2657 | 61.4% / 61.5% | 2 | 1.55 s |
+| Malapert Massif · Earth | 721 / 4321 | 490 / 2936 | 68.0% / 68.0% | 3 | 3.14 s |
+
+Ten crossings in all; the largest difference is 3.14 s, the figure the reviewer reported. Every
+hourly row is identical to the same instant in the 10-minute series. −0.23578° and 359.76422° E
+gave identical output on all 721 rows for both bodies.
+
+What this means: on the smooth sphere, hourly sampling locates these crossings as well as
+10-minute sampling does. It says nothing about the real horizon. The results stay "sampled
+geometric visibility estimates".
 
 The NSSDCA coordinates are in a DE421-based mean-Earth frame; Horizons reports `MEAN_ME` with
 DE441. Whether the difference matters at our precision is a question for Yi.

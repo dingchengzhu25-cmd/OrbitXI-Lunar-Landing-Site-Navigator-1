@@ -3,7 +3,6 @@
 import { useState } from "react";
 import {
   CartesianGrid,
-  Legend,
   Line,
   LineChart,
   ReferenceLine,
@@ -100,6 +99,19 @@ export function ElevationChart({ body, siteA, siteB, thresholdDeg }: Props) {
           {nearHorizon ? "Show full range" : `Zoom to ±${NEAR_HORIZON_HALF_RANGE_DEG}° around the horizon`}
         </button>
       </div>
+      {/* Legend as ordinary text above the plot, so long site names wrap instead of covering the chart. */}
+      <ul className="mb-1 space-y-0.5 text-xs" data-testid={`legend-${body.toLowerCase()}`}>
+        {siteA.points && (
+          <li style={{ color: SITE_A_COLOR }}>
+            <LineSample site="A" />A (solid): {siteA.label}
+          </li>
+        )}
+        {siteB.points && (
+          <li style={{ color: SITE_B_COLOR }}>
+            <LineSample site="B" />B (dashed): {siteB.label}
+          </li>
+        )}
+      </ul>
       <div className="h-72 w-full">
       <ResponsiveContainer width="100%" height="100%">
         <LineChart data={data} margin={{ top: 8, right: 12, bottom: 22, left: 4 }}>
@@ -151,7 +163,6 @@ export function ElevationChart({ body, siteA, siteB, thresholdDeg }: Props) {
             labelFormatter={(ms) => `${fullFmt.format(Number(ms))} UTC`}
             formatter={(value, name) => [`${Number(value).toFixed(3)}° ${body} elevation`, name]}
           />
-          <Legend verticalAlign="top" height={26} wrapperStyle={{ fontSize: 12 }} />
           {siteA.points && (
             <Line name={`A (solid): ${siteA.label}`} legendType="plainline" type="monotone" dataKey="a" stroke={SITE_A_COLOR} strokeWidth={2} dot={false} isAnimationActive={false} connectNulls={false} />
           )}

@@ -1,5 +1,18 @@
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { defaultSiteIds, hasSouthPoleCandidates, KIND_LABEL, presetsByGroup, SITE_PRESETS, type SitePreset } from "./sites";
+import {
+  defaultSiteIds,
+  findPreset,
+  hasRegionalReferences,
+  hasSouthPoleCandidates,
+  KIND_LABEL,
+  presetsByGroup,
+  REGIONAL_REFERENCE_PRESETS,
+  SITE_PRESETS,
+  type SitePreset,
+} from "./sites";
+import { validateQuery } from "./horizons/request";
 
 describe("site presets", () => {
   it("every preset cites a NASA source", () => {
@@ -23,7 +36,7 @@ describe("site presets", () => {
   });
 
   it("labels every non-candidate as NOT a south-pole landing candidate, in badge and note", () => {
-    for (const p of SITE_PRESETS.filter((x) => x.kind !== "south-pole-candidate")) {
+    for (const p of SITE_PRESETS.filter((x) => x.kind === "historical" || x.kind === "verification")) {
       expect(KIND_LABEL[p.kind]).toMatch(/NOT a lunar south-pole landing candidate/);
       expect(p.note).toMatch(/NOT a lunar south-pole landing candidate/);
     }
@@ -43,6 +56,92 @@ describe("site presets", () => {
   });
 });
 
+describe("south-pole regional reference points", () => {
+  it("keeps the coordinates exactly as transcribed from NASA ACD-50044 Table A2-2", () => {
+    expect(findPreset("nobile-rim-1-reference")).toMatchObject({ latDeg: -85.4381, lonEastDeg: 37.36667, altKm: 0 });
+    expect(findPreset("malapert-massif-reference")).toMatchObject({ latDeg: -85.9948, lonEastDeg: -0.23578, altKm: 0 });
+    expect(REGIONAL_REFERENCE_PRESETS).toHaveLength(2);
+  });
+
+  it("cites the NASA document, table and row for each point", () => {
+    for (const p of REGIONAL_REFERENCE_PRESETS) {
+      expect(p.sourceUrl).toMatch(/^https:\/\/ntrs\.nasa\.gov\/api\/citations\/20230007818\//);
+      expect(p.source).toMatch(/ACD-50044 Rev A \(2023\), Appendix A2, Table A2-2, R\d\d \/ Site\d\d/);
+    }
+  });
+
+  it("is never called a candidate, an approved site or a landing site without the word NOT", () => {
+    expect(hasSouthPoleCandidates()).toBe(false);
+    for (const p of REGIONAL_REFERENCE_PRESETS) {
+      expect(p.kind).toBe("south-pole-regional-reference");
+      expect(p.name).toMatch(/NASA 2023 regional reference point$/);
+      expect(p.name).not.toMatch(/candidate|landing|Artemis/i);
+      expect(p.note).toMatch(/NOT an exact landing point, NOT a NASA-approved landing site/);
+      expect(p.note).toMatch(/not necessarily the centre of a 2024 Artemis III candidate region/);
+      expect(KIND_LABEL[p.kind]).toMatch(/NOT a NASA-approved landing site/);
+    }
+  });
+
+  it("states the assumed height, the unconfirmed frame and the absence of terrain", () => {
+    for (const p of REGIONAL_REFERENCE_PRESETS) {
+      expect(p.note).toMatch(/Assumed height: 0 km \(the table gives no height\)/);
+      expect(p.note).toMatch(/has not been quantified/);
+      expect(p.note).toMatch(/Geometric horizon only: no terrain/);
+      expect(KIND_LABEL[p.kind]).toMatch(/height assumed 0 km/);
+      expect(KIND_LABEL[p.kind]).toMatch(/no terrain/);
+    }
+  });
+
+  it("has its own selector group, placed first, and is never a default selection", () => {
+    expect(hasRegionalReferences()).toBe(true);
+    const groups = presetsByGroup();
+    expect(groups[0].title).toBe("NASA 2023 Regional Reference Points — Lunar South Pole");
+    expect(groups[0].presets.map((p) => p.id)).toEqual(["nobile-rim-1-reference", "malapert-massif-reference"]);
+    expect(defaultSiteIds()).toEqual(["apollo11", "apollo17"]);
+    expect(defaultSiteIds(REGIONAL_REFERENCE_PRESETS.concat(SITE_PRESETS.filter((p) => p.kind === "verification")))).toEqual([
+      "tycho-example",
+      "tycho-example",
+    ]);
+  });
+
+  it("produces a request the server accepts, with the negative longitude mapped to 0–360° east", () => {
+    for (const p of REGIONAL_REFERENCE_PRESETS) {
+      const r = validateQuery(
+        new URLSearchParams({ target: "earth", lon: String(p.lonEastDeg), lat: String(p.latDeg), alt: String(p.altKm), start: "2026-11-14", stop: "2026-12-14", stepMin: "60" }),
+      );
+      expect(r.ok, p.id).toBe(true);
+      if (r.ok) {
+        expect(r.value.latDeg).toBe(p.latDeg);
+        expect(r.value.lonEastDeg).toBe(p.lonEastDeg < 0 ? 359.76422 : p.lonEastDeg);
+      }
+    }
+  });
+});
+
+describe("public wording for the regional reference points", () => {
+  const page = readFileSync(fileURLToPath(new URL("../components/SiteComparison.tsx", import.meta.url)), "utf8").replace(/\s+/g, " ");
+
+  it("does not say the Sun and Earth stay within a few degrees of the horizon", () => {
+    // Earth reaches about +10.26° at Malapert Massif in the month tested, so that sentence was wrong.
+    expect(page).not.toMatch(/within a few degrees/i);
+    expect(page).not.toMatch(/stay (close to|near) the horizon/i);
+  });
+
+  it("keeps every required qualification in the notice", () => {
+    for (const phrase of [
+      "NASA 2023 regional reference points are NOT NASA-approved landing points.",
+      "not necessarily the centres of the 2024 Artemis III candidate regions",
+      "sampled geometric estimates",
+      "over a smooth sphere only",
+      "Site height is assumed to be 0 km.",
+      "close to the smooth-sphere horizon at some times",
+      "No terrain, power output or radio-link performance is modelled.",
+    ]) {
+      expect(page, phrase).toContain(phrase);
+    }
+  });
+});
+
 describe("defaults and group order", () => {
   /** Stand-in used only inside this test to exercise the switch-over logic. */
   const candidate = (id: string): SitePreset => ({
@@ -56,7 +155,7 @@ describe("defaults and group order", () => {
     sourceUrl: "https://example.nasa.gov/",
     note: "",
   });
-  const withoutCandidates = SITE_PRESETS.filter((p) => p.kind !== "south-pole-candidate");
+  const withoutCandidates = SITE_PRESETS.filter((p) => p.kind !== "south-pole-candidate" && p.kind !== "south-pole-regional-reference");
 
   it("uses two historical sites while no candidates exist", () => {
     expect(hasSouthPoleCandidates(withoutCandidates)).toBe(false);
